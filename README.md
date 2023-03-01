@@ -14,6 +14,8 @@ Hermes is PoC demonstrating how a System Management Mode (SMM) rootkit can be us
 
 If you want to read about SMM rootkits in general and how the previous version of the [SMM rootkit](https://github.com/jussihi/SMM-Rootkit) was implemented, please read the [blog post](https://jussihi.kapsi.fi/2022-09-08-smmrootkit/) about it!
 
+For a more practical application of the rootkit, check out [Apollo](https://github.com/pRain1337/Apollo) which does not require any running component on the operating system.
+
 Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada (HF-ICT, Muttenz CH).
 
 ## Commands
@@ -35,6 +37,14 @@ Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada (HF-IC
 ## Examples
 
 ### Evading HVCI
+
+## Detection
+
+### MSR_SMI_COUNT
+
+### Side channel cache detection
+
+### UEFI Image analysis
 
 ## Repository Contents
 
