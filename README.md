@@ -1,16 +1,19 @@
 # Hermes
 
-## Introduction
 *Hermes was a master communicator, and thus he was able to persuade everyone, god or mortal being.*
 
 ## Table of contents
 - [Intro](#intro)
+- [Commands](#commands)
+- [Examples](#examples)
+- [Detection](#detection)
 - [Repository Contents](#repository-contents)
 - [Compiling](#compiling)
+- [Sources](#sources)
 
 ## Intro
 
-Hermes is PoC demonstrating how a System Management Mode (SMM) rootkit can be used to elevate context using smm. 
+Hermes is PoC demonstrating how a module running in System Management Mode (SMM) can be used to read/manipulate memory of Windows processes. 
 
 If you want to read about SMM rootkits in general and how the previous version of the [SMM rootkit](https://github.com/jussihi/SMM-Rootkit) was implemented, please read the [blog post](https://jussihi.kapsi.fi/2022-09-08-smmrootkit/) about it!
 
@@ -55,5 +58,46 @@ Hermes-SMM is the server component which allows client applications to elevate i
 Hermes-Client is a interactive console application which can be used to communicate with the smm rootkit.
 
 ## Compiling
+
+Prerequisites: docker, git
+
+### First time setup
+
+**Please skip to "Building" if you've done the first time setup already.**
+
+1. Inside this git repo, clone the EDK2 submodule, it will init the right tag (vUDK2018) automatically:
+
+```
+git submodule update --init
+```
+
+2. Inside the `Hermes-SMM` -directory, run
+
+```
+docker build --no-cache -t edk-builder/edk-builder .
+```
+
+to build the `edk-builder` image.
+
+3. Inside the `Hermes-SMM` -directory, start the docker by running:
+
+```
+docker run -it --privileged -v .:/root/ -u root -w /root edk-builder/edk-builder /bin/bash
+```
+
+Now inside the docker container, run
+
+```
+# cd edk2 
+# make -C BaseTools
+# . edksetup.sh
+```
+
+To set up the base tools.
+
+### Building Hermes-SMM
+
+
+
 
 ## Sources
