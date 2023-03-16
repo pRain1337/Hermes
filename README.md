@@ -13,13 +13,20 @@
 
 ## Intro
 
-Hermes is PoC demonstrating how a module running in System Management Mode (SMM) can be used to read/manipulate memory of Windows processes. 
+Hermes is PoC demonstrating how a module running in System Management Mode
+(SMM) can be used to read/manipulate memory of Windows processes. 
 
-If you want to read about SMM rootkits in general and how the previous version of the [SMM rootkit](https://github.com/jussihi/SMM-Rootkit) was implemented, please read the [blog post](https://jussihi.kapsi.fi/2022-09-08-smmrootkit/) about it!
+If you want to read about SMM rootkits in general and how the previous version
+of the [SMM rootkit](https://github.com/jussihi/SMM-Rootkit) was implemented,
+please read the [blog post](https://jussihi.kapsi.fi/2022-09-08-smmrootkit/)
+about it!
 
-For a more practical application of the rootkit, check out [Apollo](https://github.com/pRain1337/Apollo) which does not require any running component on the operating system.
+For a more practical application of the rootkit, check out
+[Apollo](https://github.com/pRain1337/Apollo) which does not require any
+running component on the operating system.
 
-Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada (HF-ICT, Muttenz CH).
+Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada
+(HF-ICT, Muttenz CH).
 
 ## Commands
 
@@ -52,10 +59,12 @@ Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada (HF-IC
 ## Repository Contents
 
 ### Hermes-SMM
-Hermes-SMM is the server component which allows client applications to elevate its rights.
+Hermes-SMM is the server component which allows client applications to elevate
+its rights.
 
 ### Hermes-Client
-Hermes-Client is a interactive console application which can be used to communicate with the smm rootkit.
+Hermes-Client is a interactive console application which can be used to
+communicate with the smm rootkit.
 
 ## Compiling
 
@@ -65,7 +74,8 @@ Prerequisites: docker, git
 
 **Please skip to "Building" if you've done the first time setup already.**
 
-1. Inside this git repo, clone the EDK2 submodule, it will init the right tag (vUDK2018) automatically:
+1. Inside this git repo, clone the EDK2 submodule, it will init the right tag
+(vUDK2018) automatically:
 
 ```
 git submodule update --init
@@ -93,11 +103,32 @@ Now inside the docker container, run
 # . edksetup.sh
 ```
 
-To set up the base tools.
+To set up the base tools. First time setup is done!
 
 ### Building Hermes-SMM
 
+To build the Hermes SMM module, start the docker instance again in `Hermes-SMM`
+directory with the following command:
 
+```
+docker run -it --privileged -v .:/root/ -u root -w /root edk-builder/edk-builder /bin/bash
+```
 
+Inside docker container, copy Hermes source files to the edk2 folder:
+
+```
+# cp -r Hermes-src/* edk2/
+```
+
+Still inside the running docker instance, you can proceed to building the
+edk2's OVMF with SMM modules enabled
+
+```
+# cd edk2
+# . edksetup.sh
+# build -DSMM_REQUIRE
+```
+
+The resulting OVMF firmware will be inside `edk2/Build/OvmfX64/RELEASE_GCC5/FV`.
 
 ## Sources
