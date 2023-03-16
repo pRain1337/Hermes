@@ -1,0 +1,52 @@
+[defines]
+  INF_VERSION = 0x00010005 
+  BASE_NAME = Hermes
+  FILE_GUID = 22D5AE41-147E-4C44-AE72-ECD9BBB455C1
+  MODULE_TYPE = DXE_SMM_DRIVER
+  PI_SPECIFICATION_VERSION = 0x0001000A
+  ENTRY_POINT = UefiMain
+
+[Sources]
+  Main.c
+  Hermes.c
+  serial.c
+  MemManager.c
+  MemoryMapUEFI.c
+  Memory.c
+  NTKernelTools.c
+  TimerRTC.c
+  string.c
+
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec  
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec  
+  StdLib/StdLib.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  PcdLib
+  BaseMemoryLib
+  DevicePathLib
+  SmmMemLib
+  PciLib
+
+[Protocols]
+  gEfiSimpleTextOutProtocolGuid
+  gEfiLoadedImageProtocolGuid
+  gEfiSmmCpuProtocolGuid
+  gEfiSmmBase2ProtocolGuid
+  gEfiSmmAccess2ProtocolGuid
+  gEfiSmmSwDispatch2ProtocolGuid
+  gEfiSmmPeriodicTimerDispatch2ProtocolGuid
+  gEfiSmmEndOfDxeProtocolGuid
+  gEfiDevicePathProtocolGuid
+  gEfiSerialIoProtocolGuid  
+  gEfiCpuArchProtocolGuid
+  
+[Depex]
+  TRUE
