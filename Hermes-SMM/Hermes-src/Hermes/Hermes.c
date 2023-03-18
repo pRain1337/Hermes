@@ -897,11 +897,8 @@ BOOLEAN HermesPollCommands()
                     
                     // Process is ok, get list of modules
                     unsigned char names[0x1000];
-                    UINT8 moduleListCount = 0;
-                    WinModule getModulesModule;
-                    getModulesModule.name = "temp.dll";
-                    // TODO: PORT TO SMM! ATM my implementation only dumps a single module
-                    // status = DumpModules(winGlobal, &getModulesProcess, &getModulesModule, FALSE, names, &moduleListCount);
+                    UINT64 moduleListCount = 0;
+                    status = DumpModuleNames(winGlobal, &getModulesProcess, FALSE, (UINT64)names, &moduleListCount);
                     
                     SerialPrintString("Modules: ");
                     SerialPrintNumber(moduleListCount, 10);

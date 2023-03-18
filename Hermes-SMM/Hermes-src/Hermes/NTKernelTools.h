@@ -148,6 +148,7 @@ PEB32 GetPeb32(const WinCtx *ctx, const WinProc *process);
 BOOLEAN FindProcess(WinCtx *ctx, CHAR8 *processname, BOOLEAN verbose);
 BOOLEAN DumpSingleProcess(WinCtx *ctx, CHAR8 *processname, WinProc *process, BOOLEAN verbose);
 BOOLEAN DumpSingleModule(const WinCtx *ctx, const WinProc *process, WinModule *out_module, BOOLEAN verbose);
+BOOLEAN DumpModuleNames(WinCtx* ctx, WinProc* process, BOOLEAN verbose, UINT64 moduleList, UINT64 *moduleListCount);
 
 BOOLEAN ProcessGetThunkInfoIAT(WinProc *process, WinModule *basemodule, CHAR8 *szImportModuleName, CHAR8 *szImportProcName, PPE_THUNKINFO_IAT pThunkInfoIAT);
 

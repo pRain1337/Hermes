@@ -1112,6 +1112,209 @@ BOOLEAN DumpSingleModule(const WinCtx *ctx, const WinProc *process, WinModule *o
   return ret;
 }
 
+STATIC BOOLEAN DumpModuleNames64(const WinCtx *ctx, const WinProc *process, BOOLEAN *x86, BOOLEAN verbose, UINT64 moduleList, UINT64 *moduleListCount)
+{
+  if (process->dirBase == 0 || process->physProcess == 0 || process->process == 0)
+  {
+    SerialPrintString("ERROR: Process not setup correctly for module dumping!\r\n");
+    return FALSE;
+  }
+
+  PEB peb = GetPeb(ctx, process);
+
+  if (peb.Ldr == 0)
+  {
+    SerialPrintString("ERROR: Failed reading PEB64 for module dumping!\r\n");
+    return FALSE;
+  }
+
+  PEB_LDR_DATA *ldr;
+
+  UINT64 physLdr = VTOP(peb.Ldr, process->dirBase, FALSE);
+
+  if (IsAddressValid(physLdr) == FALSE)
+  {
+    SerialPrintString("ERROR: Phys Ldr is invalid while dumping module!\r\n");
+    return FALSE;
+  }
+
+  ldr = (PEB_LDR_DATA *)physLdr;
+  UINT64 head = ldr->InMemoryOrderModuleList.f_link;
+
+  UINT64 end = head;
+  UINT64 prev = head + 1;
+
+  do
+  {
+    prev = head;
+
+    UINT8 modBuffer[sizeof(LDR_MODULE)];
+    LDR_MODULE *mod = (LDR_MODULE *)modBuffer;
+
+    v_memRead((UINT64)mod, head - sizeof(LIST_ENTRY_WIN), sizeof(LDR_MODULE), process->dirBase, FALSE);
+    v_memRead((UINT64)&head, head, sizeof(head), process->dirBase, FALSE);
+
+    if (!mod->BaseDllName.length || !mod->SizeOfImage)
+    {
+      continue;
+    }
+
+    if (mod->BaseDllName.buffer == 0)
+    {
+      continue;
+    }
+
+    UINT8 oldBuffer[0x40];
+    v_memRead((UINT64)oldBuffer, mod->BaseDllName.buffer, 0x40, process->dirBase, FALSE);
+
+    CHAR8 newBuffer[0x20];
+    for (INT32 i = 0; i < 0x1f; i++)
+      newBuffer[i] = ((CHAR8 *)oldBuffer)[i * 2];
+    newBuffer[0x20 - 1] = '\0';
+
+    if (*(INT16 *)(VOID *)newBuffer == 0x53)
+    {
+      SerialPrintStringDebug("  WARNING: Name buffer error while dumping module! \r\n");
+      continue;
+    }
+
+    // bail out if the process is 64-bit,
+    // find the module with the 32-bit func
+    if (!strcmp("wow64.dll", newBuffer))
+    {
+      *x86 = TRUE;
+      return FALSE;
+    }
+
+    if (moduleList != 0 && moduleListCount != 0)
+    {
+      if (*moduleListCount < 127)
+      {
+        // Fill all the modulenames into a list
+        p_memCpy(moduleList + (*moduleListCount * 32), (UINT64)newBuffer, 32, FALSE);
+        *moduleListCount += 1;
+      }
+    }
+
+  } while (head != end && head != prev);
+
+  return TRUE;
+}
+
+STATIC BOOLEAN DumpModuleNames86(const WinCtx *ctx, const WinProc *process, BOOLEAN verbose, UINT64 moduleList, UINT64 *moduleListCount)
+{
+  if (process->dirBase == 0 || process->physProcess == 0 || process->process == 0)
+  {
+    SerialPrintString("ERROR: Process not setup correctly \r\n");
+    return FALSE;
+  }
+
+  UINT64 dirBase = process->dirBase;
+
+  // Get PEB32 of Process
+  PEB32 peb = GetPeb32(ctx, process);
+
+  if (peb.Ldr == 0)
+  {
+    SerialPrintString("Failed reading PEB32 \r\n");
+    return FALSE;
+  }
+
+  PEB_LDR_DATA32 *ldr;
+
+  UINT64 physLdr = VTOP(peb.Ldr, dirBase, FALSE);
+
+  if (IsAddressValid(physLdr) == FALSE)
+  {
+    SerialPrintString("ERROR: Phys Ldr is invalid \r\n");
+    return FALSE;
+  }
+
+  SerialPrintStringDebug("  Phys Ldr at: ");
+  SerialPrintNumberDebug(physLdr, 16);
+  SerialPrintStringDebug("\r\n");
+
+  ldr = (PEB_LDR_DATA32 *)physLdr;
+
+  SerialPrintStringDebug("  Head Flink: ");
+  SerialPrintNumberDebug(ldr->InMemoryOrderModuleList.f_link, 16);
+  SerialPrintStringDebug("\r\n");
+
+  UINT32 head = ldr->InMemoryOrderModuleList.f_link;
+
+  UINT32 end = head;
+  UINT32 prev = head + 1;
+
+  do
+  {
+    prev = head;
+
+    UINT8 modBuffer[sizeof(LDR_MODULE32)];
+    LDR_MODULE32 *mod = (LDR_MODULE32 *)modBuffer;
+
+    v_memRead((UINT64)mod, head - sizeof(LIST_ENTRY_32_WIN), sizeof(LDR_MODULE32), dirBase, verbose);
+    v_memRead((UINT64)&head, head, sizeof(head), dirBase, verbose);
+
+    if (!mod->BaseDllName.length || !mod->SizeOfImage)
+    {
+      continue;
+    }
+
+    if (mod->BaseDllName.buffer == 0)
+    {
+      continue;
+    }
+
+    UINT8 oldBuffer[0x28];
+    v_memRead((UINT64)oldBuffer, mod->BaseDllName.buffer, 0x28, dirBase, verbose);
+
+    CHAR8 newBuffer[0x15];
+    for (INT32 i = 0; i < 0x14; i++)
+      newBuffer[i] = ((CHAR8 *)oldBuffer)[i * 2];
+    newBuffer[0x15 - 1] = '\0';
+
+    if (*(INT16 *)(VOID *)newBuffer == 0x53)
+    {
+      SerialPrintStringDebug("ERROR: Buffer error! \r\n");
+      continue;
+    }
+
+    if (moduleList != 0 && moduleListCount != 0)
+    {
+      if (*moduleListCount < 127)
+      {
+        // Fill all the modulenames into a list
+        p_memCpy(moduleList + (*moduleListCount * 32), (UINT64)newBuffer, 32, FALSE);
+        *moduleListCount += 1;
+      }
+    }
+
+  } while (head != end && head != prev);
+
+  return FALSE;
+}
+
+BOOLEAN DumpModuleNames(WinCtx* ctx, WinProc* process, BOOLEAN verbose, UINT64 moduleList, UINT64 *moduleListCount)
+{
+  BOOLEAN status = FALSE;
+  BOOLEAN x86 = FALSE;
+
+  status = DumpModuleNames64(ctx, process, &x86, verbose, moduleList, moduleListCount);
+    
+  if (status == FALSE && x86 == FALSE && moduleList == 0)
+    return FALSE;
+
+  if (x86)
+    status = DumpModuleNames86(ctx, process, verbose, moduleList, moduleListCount);
+
+  if (status == FALSE && moduleList == 0)
+  {
+    return status;
+  }
+
+  return status;
+}
+
 PEB GetPeb(const WinCtx *ctx, const WinProc *process)
 {
   PEB peb;
