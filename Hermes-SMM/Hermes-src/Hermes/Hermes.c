@@ -803,9 +803,7 @@ BOOLEAN HermesPollCommands()
                     
                     for (UINT64 i = 0; i < size; i+= 0x1000)
                     {
-                        // TODO: fix this, how is this implemented?
-                        //BOOLEAN status = v_copyTo_v((UINT64)(*resultPointer) + i, base + i, 0x1000, process.dirBase, dirbase, FALSE);
-                        BOOLEAN status = FALSE;
+                        BOOLEAN status = v_to_v_memCpy((UINT64)(*resultPointer) + i, base + i, 0x1000, process.dirBase, dirbase, FALSE);
 
                         if (status == FALSE)
                         {

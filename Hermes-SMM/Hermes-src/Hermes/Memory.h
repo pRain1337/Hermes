@@ -35,4 +35,6 @@ BOOLEAN v_memReadMultiPage(UINT64 dest, UINT64 src, size_t n, UINT64 directoryBa
 
 BOOLEAN v_memRead(UINT64 dest, UINT64 src, size_t n, UINT64 directoryBase, BOOLEAN verbose);
 
+BOOLEAN v_to_v_memCpy(UINT64 dest, UINT64 src, size_t n, UINT64 directoryBaseDest, UINT64 directoryBaseSource, BOOLEAN verbose);
+
 #endif

@@ -330,3 +330,25 @@ BOOLEAN v_memRead(UINT64 dest, UINT64 src, size_t n, UINT64 directoryBase, BOOLE
   // Read physical
   return p_memCpy(dest, pSrc, n, verbose);
 }
+
+BOOLEAN v_to_v_memCpy(UINT64 dest, UINT64 src, size_t n, UINT64 directoryBaseDest, UINT64 directoryBaseSource, BOOLEAN verbose)
+{
+  // Translate source virtual address to physical
+  UINT64 pSrc = VTOP(src, directoryBaseSource, verbose);
+    
+  if (pSrc == 0)
+  {
+    return FALSE;
+  }
+
+  // Translate destination virtual address to physical
+  UINT64 pDest = VTOP(dest, directoryBaseDest, verbose);
+    
+  if (pDest == 0)
+  {
+    return FALSE;
+  }
+
+  // Read physical
+  return p_memCpy(pDest, pSrc, n, verbose);
+}
