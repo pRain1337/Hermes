@@ -131,4 +131,10 @@ edk2's OVMF with SMM modules enabled
 
 The resulting OVMF firmware will be inside `edk2/Build/OvmfX64/RELEASE_GCC5/FV`.
 
+### Building Hermes-Client
+
+To build the Hermes-Client you dont need docker, but visual studio.
+Simply open the Solution file and compile, you might need platform/sdk/toolset on the project file first.
+The default settings compile a x64-86 application for windows.
+
 ## Sources
