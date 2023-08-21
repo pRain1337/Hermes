@@ -113,15 +113,18 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
     // Write to serial port
     SerialPortInitialize(SERIAL_PORT_0, SERIAL_BAUDRATE);
     SerialPrintString("\r\n");
-    SerialPrintStringDebug("----------------------------------------------\r\n");
-    SerialPrintStringDebug("|                                            |\r\n");
-    SerialPrintStringDebug("|             Initializing HERMES            |\r\n");
-    SerialPrintStringDebug("|                                            |\r\n");
-    SerialPrintStringDebug("|                Shoutout to                 |\r\n");
-    SerialPrintStringDebug("|          zyklon   vasyan    balrog         |\r\n");
-    SerialPrintStringDebug("|   floesen    niceone   sh4rk   akandesh    |\r\n");
-    SerialPrintStringDebug("----------------------------------------------\r\n");
-    SerialPrintStringDebug("                                              \r\n");
+    SerialPrintString("----------------------------------------------\r\n");
+    SerialPrintString("|                                            |\r\n");
+    SerialPrintString("|             Initializing HERMES            |\r\n");
+    SerialPrintString("|                                            |\r\n");
+    SerialPrintString("|                   Made by                  |\r\n");
+    SerialPrintString("|                 rain jussihi               |\r\n");
+    SerialPrintString("|                                            |\r\n");
+    SerialPrintString("|                Shoutout to                 |\r\n");
+    SerialPrintString("|          zyklon   vasyan    balrog         |\r\n");
+    SerialPrintString("|   floesen    niceone   sh4rk   akandesh    |\r\n");
+    SerialPrintString("----------------------------------------------\r\n");
+    SerialPrintString("                                              \r\n");
     SerialPrintString("\r\n");
     
     // Save the system tables etc. in global variable for further usage

@@ -13,6 +13,13 @@ UINT64 GetMemAllocated()
   return memAllocated;
 }
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-value"
+#endif
+
 BOOLEAN InitMemManager(UINT32 pages)
 {
   memPoolInitialized = FALSE;
@@ -23,11 +30,11 @@ BOOLEAN InitMemManager(UINT32 pages)
     memPool = (PMemAllocEntry_t)physAddr;
 
     // nullify the pool
-    UINT8 *pool = (UINT8 *)memPool;
-    for (UINT32 i = 0; i < pages * 4096; i++)
-    {
-      pool[i] = (UINT8)0x00;
-    }
+    //UINT8 *pool = (UINT8 *)memPool;
+    //for (UINT32 i = 0; i < pages * 4096; i++)
+    //{
+    //  pool[i] = (UINT8)0x00;
+    //}
 
     // set the global vars, needed by malloc
     memPoolInitialized = TRUE;

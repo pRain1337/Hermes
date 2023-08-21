@@ -4,7 +4,7 @@ EFI_EXIT_BOOT_SERVICES gOrigExitBootServices;
 EFI_MEMORY_DESCRIPTOR *mUefiMemoryMap;
 UINTN mUefiMemoryMapSize;
 UINTN mUefiDescriptorSize;
-extern EFI_BOOT_SERVICES *lBS; // From Main.c
+extern EFI_BOOT_SERVICES *gBS; // From Main.c
 
 #define NEXT_MEMORY_DESCRIPTOR(MemoryDescriptor, Size) \
   ((EFI_MEMORY_DESCRIPTOR *)((UINT8 *)(MemoryDescriptor) + (Size)))
@@ -133,7 +133,7 @@ BOOLEAN InitUefiMemoryMap()
 
   EFI_STATUS Status;
 
-  Status = lBS->GetMemoryMap(
+  Status = gBS->GetMemoryMap(
       &MemoryMapSize,
       MemoryMap,
       &LocalMapKey,
@@ -142,14 +142,14 @@ BOOLEAN InitUefiMemoryMap()
 
   do
   {
-    Status = lBS->AllocatePool(EfiBootServicesData, MemoryMapSize, (VOID **)&MemoryMap);
+    Status = gBS->AllocatePool(EfiBootServicesData, MemoryMapSize, (VOID **)&MemoryMap);
 
     if (MemoryMap == NULL)
     {
       return FALSE;
     }
 
-    Status = lBS->GetMemoryMap(
+    Status = gBS->GetMemoryMap(
         &MemoryMapSize,
         MemoryMap,
         &LocalMapKey,
@@ -157,7 +157,7 @@ BOOLEAN InitUefiMemoryMap()
         &DescriptorVersion);
     if (EFI_ERROR(Status))
     {
-      lBS->FreePool(MemoryMap);
+      gBS->FreePool(MemoryMap);
       MemoryMap = NULL;
     }
   } while (Status == EFI_BUFFER_TOO_SMALL);
@@ -170,10 +170,10 @@ BOOLEAN InitUefiMemoryMap()
 
   mUefiMemoryMapSize = MemoryMapSize;
   EFI_PHYSICAL_ADDRESS NewMemoryMap;
-  Status = lBS->AllocatePages(AllocateAnyPages, EfiRuntimeServicesData, 1, &NewMemoryMap);
+  Status = gBS->AllocatePages(AllocateAnyPages, EfiRuntimeServicesData, 1, &NewMemoryMap);
   CopyMemUnsafe(NewMemoryMap, (UINT64)MemoryMap, MemoryMapSize, FALSE);
   mUefiMemoryMap = (EFI_MEMORY_DESCRIPTOR *)NewMemoryMap;
-  lBS->FreePool(MemoryMap);
+  gBS->FreePool(MemoryMap);
 
   return TRUE;
 }
