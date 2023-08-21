@@ -1,15 +1,15 @@
 /*
- * This file and the corresponding .c file 
- * contains a set of needed Windows-related 
- * functions for both reading & writing its 
- * virtual memory. 
- * 
- * These files are imported and ported to work 
- * in SMM. The original libraries are 
- * 
+ * This file and the corresponding .c file
+ * contains a set of needed Windows-related
+ * functions for both reading & writing its
+ * virtual memory.
+ *
+ * These files are imported and ported to work
+ * in SMM. The original libraries are
+ *
  * - MemProcFS/pcileech by Ulf Frisk
  * - vmread by Heep042
- * 
+ *
  */
 
 #ifndef __hermes_ntkerneltools_h__
@@ -31,106 +31,106 @@
 
 typedef struct ProcessData
 {
-  UINT64 mapsStart;
-  UINT64 mapsSize;
-  INT32 pid;
+    UINT64 mapsStart;
+    UINT64 mapsSize;
+    INT32 pid;
 } ProcessData;
 
 typedef struct WinOffsets
 {
-  INT64 apl;
-  INT64 session;
-  INT64 imageFileName;
-  INT64 dirBase;
-  INT64 peb;
-  INT64 peb32;
-  INT64 threadListHead;
-  INT64 threadListEntry;
-  INT64 teb;
+    INT64 apl;
+    INT64 session;
+    INT64 imageFileName;
+    INT64 dirBase;
+    INT64 peb;
+    INT64 peb32;
+    INT64 threadListHead;
+    INT64 threadListEntry;
+    INT64 teb;
 } WinOffsets;
 
 typedef struct WinProc
 {
-  UINT64 process;
-  UINT64 physProcess;
-  UINT64 dirBase;
-  UINT64 pid;
-  char name[16];
+    UINT64 process;
+    UINT64 physProcess;
+    UINT64 dirBase;
+    UINT64 pid;
+    char name[16];
 } WinProc;
 
 typedef struct WinProcList
 {
-  WinProc *list;
-  size_t size;
+    WinProc *list;
+    size_t size;
 } WinProcList;
 
 typedef struct WinExport
 {
-  char *name;
-  UINT64 address;
+    char *name;
+    UINT64 address;
 } WinExport;
 
 typedef struct WinExportList
 {
-  WinExport *list;
-  size_t size;
+    WinExport *list;
+    size_t size;
 } WinExportList;
 
 typedef struct WinModule
 {
-  UINT64 baseAddress;
-  UINT64 entryPoint;
-  UINT64 sizeOfModule;
-  char *name;
-  short loadCount;
+    UINT64 baseAddress;
+    UINT64 entryPoint;
+    UINT64 sizeOfModule;
+    char *name;
+    short loadCount;
 } WinModule;
 
 typedef struct WinModuleList
 {
-  WinModule *list;
-  size_t size;
+    WinModule *list;
+    size_t size;
 } WinModuleList;
 
 typedef struct WinCtx
 {
-  ProcessData process;
-  WinOffsets offsets;
-  UINT64 ntKernel;
-  UINT16 ntVersion;
-  UINT32 ntBuild;
-  WinExportList ntExports;
-  WinProc initialProcess;
+    ProcessData process;
+    WinOffsets offsets;
+    UINT64 ntKernel;
+    UINT16 ntVersion;
+    UINT32 ntBuild;
+    WinExportList ntExports;
+    WinProc initialProcess;
 } WinCtx;
 
 typedef struct tdPE_THUNKINFO_IAT
 {
-  UINT32 fValid;
-  UINT32 f32;            // if TRUE fn is a 32-bit/4-byte entry, otherwise 64-bit/8-byte entry.
-  UINT64 vaThunk;        // address of import address table 'thunk'.
-  UINT64 vaFunction;     // value if import address table 'thunk' == address of imported function.
-  UINT64 vaNameModule;   // address of name string for imported module.
-  UINT64 vaNameFunction; // address of name string for imported function.
+    UINT32 fValid;
+    UINT32 f32;            // if TRUE fn is a 32-bit/4-byte entry, otherwise 64-bit/8-byte entry.
+    UINT64 vaThunk;        // address of import address table 'thunk'.
+    UINT64 vaFunction;     // value if import address table 'thunk' == address of imported function.
+    UINT64 vaNameModule;   // address of name string for imported module.
+    UINT64 vaNameFunction; // address of name string for imported function.
 } PE_THUNKINFO_IAT, *PPE_THUNKINFO_IAT;
 
 typedef struct tdPE_THUNKINFO_EAT
 {
-  UINT32 fValid;
-  UINT32 valueThunk;     // value of export address table 'thunk'.
-  UINT64 vaThunk;        // address of import address table 'thunk'.
-  UINT64 vaNameFunction; // address of name string for exported function.
-  UINT64 vaFunction;     // address of exported function (module base + value parameter).
+    UINT32 fValid;
+    UINT32 valueThunk;     // value of export address table 'thunk'.
+    UINT64 vaThunk;        // address of import address table 'thunk'.
+    UINT64 vaNameFunction; // address of name string for exported function.
+    UINT64 vaFunction;     // address of exported function (module base + value parameter).
 } PE_THUNKINFO_EAT, *PPE_THUNKINFO_EAT;
 
 typedef struct _IMAGE_IMPORT_DESCRIPTOR
 {
-  union {
-    UINT32 Characteristics;    //0 for terminating null import descriptor
-    UINT32 OriginalFirstThunk; // RVA to original unbound IAT
-  };
-  UINT32 TimeDateStamp;
-  UINT32 ForwarderChain; // -1 if no forwarders
-  UINT32 Name;           // RVA of imported DLL name (null-terminated SCII)
-  UINT32 FirstThunk;     // RVA to IAT (if bound this IAT has addresses )
+    union {
+        UINT32 Characteristics;    //0 for terminating null import descriptor
+        UINT32 OriginalFirstThunk; // RVA to original unbound IAT
+    };
+    UINT32 TimeDateStamp;
+    UINT32 ForwarderChain; // -1 if no forwarders
+    UINT32 Name;           // RVA of imported DLL name (null-terminated SCII)
+    UINT32 FirstThunk;     // RVA to IAT (if bound this IAT has addresses )
 
 } IMAGE_IMPORT_DESCRIPTOR, *PIMAGE_IMPORT_DESCRIPTOR;
 

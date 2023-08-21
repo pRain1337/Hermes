@@ -64,6 +64,7 @@ VOID SmmCallHandle()
     {
         // try to grab the windows Context
         SystemInitOS = InitGlobalWindowsContext();
+
         // give more time if it still failed
         if (!SystemInitOS)
         {
@@ -73,7 +74,7 @@ VOID SmmCallHandle()
     }
 
     // If system has been initialized, poll for user commands
-    if(FindProcess(winGlobal, "hermes.exe", FALSE))
+    if (FindProcess(winGlobal, "hermes.exe", FALSE))
     {
         // Do Hermes Stuff
         HermesPollCommands();
@@ -126,7 +127,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
     SerialPrintString("----------------------------------------------\r\n");
     SerialPrintString("                                              \r\n");
     SerialPrintString("\r\n");
-    
+
     // Save the system tables etc. in global variable for further usage
     gST = SystemTable;
     gBS = SystemTable->BootServices;
@@ -156,9 +157,9 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
     {
         return Status;
     }
-    
+
     SerialPrintStringDebug("Allocating initial memory \r\n");
-    
+
 
     EFI_PHYSICAL_ADDRESS winGlobalAddress;
     Status = gSmst2->SmmAllocatePages(AllocateAnyPages, EfiRuntimeServicesData, 1, &winGlobalAddress);
@@ -172,7 +173,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
     {
         SerialPrintStringDebug("memory manager successfully initialized!\r\n");
     }
-    
+
     // Set the start time of the PC
     SystemStartTime = CmosGetCurrentTime();
     SystemUptime = SystemStartTime;
@@ -183,7 +184,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
     // Initialize the os ctx value, so no useless
     // probing is done while the OS hasn't even booted
     SystemInitOS = FALSE;
-    
+
     return Status;
 }
 

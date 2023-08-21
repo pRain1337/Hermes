@@ -7,11 +7,11 @@
  */
 #define HERMES_SERIAL_ENABLED
 
-/*
- * Serial port configuration.
- * For EFI_DEBUG_SERIAL_BUILTIN and EFI_DEBUG_SERIAL_PROTOCOL.
- * Port 0 is the default port on the motherboard
- */
+ /*
+  * Serial port configuration.
+  * For EFI_DEBUG_SERIAL_BUILTIN and EFI_DEBUG_SERIAL_PROTOCOL.
+  * Port 0 is the default port on the motherboard
+  */
 #define SERIAL_BAUDRATE_MAX 115200
 #define SERIAL_BAUDRATE 115200
 #define SERIAL_PORT_0 0x3F8 
@@ -21,9 +21,9 @@
 #include <Library/UefiRuntimeLib.h>
 
 
-/*
- *Initialize the serial device hardware.
- */
+  /*
+   *Initialize the serial device hardware.
+   */
 VOID SerialPortInitialize(UINT16 Port, UINTN Baudrate);
 
 /*
@@ -59,7 +59,7 @@ VOID SerialSendData(const VOID* buf, UINT8 len);
 
 /*
  * Print a number into serial.
- * 
+ *
  * @param _v --> the value to print
  * @param _b --> the base to convert to
  */
