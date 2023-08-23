@@ -40,6 +40,7 @@ int main()
 
 	// Initialize communication buffer
 	std::cout << "Combuffer at: " << std::hex << (uint64_t)identifier << std::endl;
+    std::cout << "Data begins at: " << std::hex << (uint64_t)identifier + 128 << std::endl;
 
 	uint64_t packetBegin = (uint64_t)identifier + 128;
 

@@ -35,6 +35,8 @@ typedef enum {
 } hermes_command_t;
 
 // Main Packet
+// Disable padding so it is the same struct size everywhere
+#pragma pack(push, 1)
 typedef struct {
 	uint16_t begin;                         // Signals the start of the packet in memory
 	uint8_t  command;                       // Command that should be executed by smm
@@ -42,6 +44,7 @@ typedef struct {
 	uint64_t resultPointer;                 // Pointer to the result, where smm should write
 	uint16_t end;                           // Signals the end of the packet in memory
 } hermes_packet;
+#pragma pack(pop)
 
 // Results
 typedef enum {

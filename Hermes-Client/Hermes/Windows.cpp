@@ -61,7 +61,7 @@ void getModules(uint64_t packetBegin)
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
     
-    if (*resultToCheck < 0x9000)
+    if (*resultToCheck != HERMES_STATUS_OK)
     {
         // Print error explanation
         printError(*resultToCheck);
@@ -223,7 +223,7 @@ void dumpModule(uint64_t packetBegin)
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
     
-    if (*resultToCheck < 0x9000)
+    if (*resultToCheck != HERMES_STATUS_OK)
     {
         // Print error explanation
         printError(*resultToCheck);

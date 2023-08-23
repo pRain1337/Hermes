@@ -1,5 +1,38 @@
 #include "Prints.h"
 
+#include <iostream>
+#include <map>
+#include <string>
+
+std::map<uint64_t, std::string> hermes_statuscodes =
+{
+  { HERMES_STATUS_INVALID_COMMAND, "Invalid command parameter was passed"  },
+  { HERMES_STATUS_INVALID_DATA_PTR, "Invalid data pointer was passed"  },
+  { HERMES_STATUS_INVALID_RES_PTR, "Invalid result pointer was passed"  },
+  { HERMES_STATUS_INVALID_IDENTIFIERS, "Invalid identifiers were passed"  },
+  { HERMES_STATUS_FAIL_FIND_PROC, "Failed finding the process"  },
+  { HERMES_STATUS_FAIL_FIND_DIRBASE, "Failed getting dirbase"  },
+  { HERMES_STATUS_FAIL_FIND_MOD, "Failed finding the module"  },
+  { HERMES_STATUS_FAIL_READ_MOD_BASE, "Failed reading module base"  },
+  { HERMES_STATUS_FAIL_READ_MOD_SIZE, "Failed reading module size"  },
+  { HERMES_STATUS_PROCNAME_TOO_LONG, "Process name size is too big"  },
+  { HERMES_STATUS_MODNAME_TOO_LONG, "Module name size is too big"  },
+  { HERMES_STATUS_FAIL_VIRT_READ, "Failed reading virtual address"  },
+  { HERMES_STATUS_FAIL_VIRT_WRITE, "Failed writing virtual address"  },
+  { HERMES_STATUS_INVALID_DATA_SOURCE, "Invalid data source was passed"  },
+  { HERMES_STATUS_INVALID_DATA_DIRBASE, "Invalid data dirbase was passed"  },
+  { HERMES_STATUS_INVALID_DATA_SIZE, "Invalid data size was passed"  },
+  { HERMES_STATUS_INVALID_DATA_DEST, "Invalid data destination was passed"  },
+  { HERMES_STATUS_REQ_TOO_LARGE, "Requested size is too big"  },
+  { HERMES_STATUS_FAIL_SBUFF_VIRTW, "Failed reading source buffer for virtual write"  },
+  { HERMES_STATUS_FAIL_ADDR_TRANSLATION, "Failed translating address"  },
+  { HERMES_STATUS_FAIL_SBUFF_PHYSW, "Failed reading source buffer for physical write"  },
+  { HERMES_STATUS_INVALID_MOD_BASE, "Invalid module base"  },
+  { HERMES_STATUS_INVALID_MOD_SIZE, "Invalid module size"  },
+  { HERMES_STATUS_FAIL_PHYS_READ, "Failed reading physical address"  },
+  { HERMES_STATUS_FAIL_PHYS_WRITE, "Failed writing physical address"  }
+};
+
 /*
  *   Funtetm.
  *   et:
@@ -21,7 +54,7 @@ void printCommands(uint64_t dummy)
 	std::cout << " pw		- writes to supplied physical address" << std::endl;
 	std::cout << " vtp		- converts virtual to physical" << std::endl;
 	std::cout << " dm		- dumps the supplied modulename / size" << std::endl;
-	std::cout << " exit		- ends the atlas process " << std::endl;
+	std::cout << " exit		- ends the Hermes process " << std::endl;
 	std::cout << " help		- displays this again" << std::endl;
 }
 
@@ -80,110 +113,13 @@ void printBuffer(unsigned char *buf, int size)
 */
 void printError(uint64_t errorcode)
 {
-	switch (errorcode)
-	{
-	case (HERMES_STATUS_INVALID_COMMAND):
-		std::cout << "Invalid command parameter was passed (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_DATA_PTR):
-		std::cout << "Invalid data pointer was passed (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_RES_PTR):
-		std::cout << "Invalid result pointer was passed (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_IDENTIFIERS):
-		std::cout << "Invalid identifiers were passed (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_FIND_PROC):
-		std::cout << "Failed finding the process (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_FIND_DIRBASE):
-		std::cout << "Failed getting dirbase (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_FIND_MOD):
-		std::cout << "Failed finding the module (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_READ_MOD_BASE):
-		std::cout << "Failed reading module base (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_READ_MOD_SIZE):
-		std::cout << "Failed reading module size (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_PROCNAME_TOO_LONG):
-		std::cout << "Process name size is too big (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_MODNAME_TOO_LONG):
-		std::cout << "Module name size is too big (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_VIRT_READ):
-		std::cout << "Failed reading virtual address (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_VIRT_WRITE):
-		std::cout << "Failed writing virtual address (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_DATA_SOURCE):
-		std::cout << "Invalid data source was passed (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_DATA_DIRBASE):
-		std::cout << "Invalid data dirbase was passed (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_DATA_SIZE):
-		std::cout << "Invalid data size was passed (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_DATA_DEST):
-		std::cout << "Invalid data destination was passed (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_REQ_TOO_LARGE):
-		std::cout << "Requested size is too big (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_SBUFF_VIRTW):
-		std::cout << "Failed reading source buffer for virtual write (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_ADDR_TRANSLATION):
-		std::cout << "Failed translating address (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_SBUFF_PHYSW):
-		std::cout << "Failed reading source buffer for physical write (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_MOD_BASE):
-		std::cout << "Invalid module base (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_INVALID_MOD_SIZE):
-		std::cout << "Invalid module size (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_PHYS_READ):
-		std::cout << "Failed reading physical address (0x" << errorcode << ")" << std::endl;
-		break;
-
-	case (HERMES_STATUS_FAIL_PHYS_WRITE):
-		std::cout << "Failed writing physical address (0x" << errorcode << ")" << std::endl;
-		break;
-
-	default:
-		std::cout << "Unknown error occured (0x" << errorcode << ")" << std::endl;
-		break;
-	}
+    try
+    {
+        std::cout << hermes_statuscodes.at(errorcode) << " (0x" << errorcode << ")" << std::endl;
+    }
+    catch (...)
+    {
+        // Invalid status code received, print unknown
+        std::cout << "Unknown error occured (0x" << errorcode << ")" << std::endl;
+    }
 }

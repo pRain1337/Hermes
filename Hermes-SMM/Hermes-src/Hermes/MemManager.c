@@ -20,6 +20,10 @@ UINT64 GetMemAllocated()
 #pragma GCC diagnostic ignored "-Wunused-value"
 #endif
 
+// Disable optimization on MSVC as it tries to link memset which is not possible
+#ifdef _MSC_VER
+#pragma optimize("", off)
+#endif
 BOOLEAN InitMemManager(UINT32 pages)
 {
     memPoolInitialized = FALSE;
@@ -30,11 +34,11 @@ BOOLEAN InitMemManager(UINT32 pages)
         memPool = (PMemAllocEntry_t)physAddr;
 
         // nullify the pool
-        //UINT8 *pool = (UINT8 *)memPool;
-        //for (UINT32 i = 0; i < pages * 4096; i++)
-        //{
-        //  pool[i] = (UINT8)0x00;
-        //}
+        UINT8 *pool = (UINT8 *)memPool;
+        for (UINT32 i = 0; i < pages * 4096; i++)
+        {
+          pool[i] = (UINT8)0x00;
+        }
 
         // set the global vars, needed by malloc
         memPoolInitialized = TRUE;
@@ -45,6 +49,9 @@ BOOLEAN InitMemManager(UINT32 pages)
     }
     return memPoolInitialized;
 }
+#ifdef _MSC_VER
+#pragma optimize("", on)
+#endif
 
 VOID *palloc(UINT32 pages)
 {

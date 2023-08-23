@@ -68,6 +68,7 @@ VOID SmmCallHandle()
         // give more time if it still failed
         if (!SystemInitOS)
         {
+            SerialPrintString("   System OS not found...\r\n");
             SystemStartTime = SystemUptime;
             return;
         }
@@ -143,7 +144,7 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
         SerialPrintString("Could not locate SmmBase2 protocol!\r\n");
         return Status;
     }
-
+    
     // get EFI_SMM_SYSTEM_TABLE2 in global var
     if ((Status = SmmBase2->GetSmstLocation(SmmBase2, &gSmst2)) != EFI_SUCCESS)
     {
@@ -158,21 +159,33 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
         return Status;
     }
 
-    SerialPrintStringDebug("Allocating initial memory \r\n");
-
+    SerialPrintString("Allocating initial memory \r\n");
 
     EFI_PHYSICAL_ADDRESS winGlobalAddress;
     Status = gSmst2->SmmAllocatePages(AllocateAnyPages, EfiRuntimeServicesData, 1, &winGlobalAddress);
     winGlobal = (WinCtx *)winGlobalAddress;
-    SerialPrintStringDebug("WinGlobal: 0x");
-    SerialPrintNumberDebug((UINT64)winGlobal, 16);
-    SerialPrintStringDebug("\r\n");
+    SerialPrintString("WinGlobal: 0x");
+    SerialPrintNumber((UINT64)winGlobal, 16);
+    SerialPrintString("\r\n");
 
     // Initialize our own heap with some memory to be used
     if (InitMemManager(100))
     {
-        SerialPrintStringDebug("memory manager successfully initialized!\r\n");
+        SerialPrintString("memory manager successfully initialized!\r\n");
     }
+
+    // Initialize the virtual memory map for UEFI
+    SerialPrintString("Initializing UEFI Memory Map \r\n");
+    if (!InitUefiMemoryMap())
+    {
+        SerialPrintString("Failed dumping Memory Map for UEFI \r\n");
+        return EFI_ERROR_MAJOR;
+    }
+    SerialPrintString("Successfully dumped Memory Map \r\n");
+
+    SerialPrintString("Memory Map at: 0x");
+    SerialPrintNumber((UINT64)GetUefiMemoryMap(), 16);
+    SerialPrintString("\r\n");
 
     // Set the start time of the PC
     SystemStartTime = CmosGetCurrentTime();

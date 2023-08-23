@@ -15,33 +15,25 @@ extern EFI_SMM_SYSTEM_TABLE2 *gSmst2;
 */
 STATIC BOOLEAN CheckLow(UINT64 *pml4, UINT64 *kernelEntry)
 {
-    UINT64 o = 0;
-    while (o < 0x100000)
-    {
-        o += 0x1000;
+	UINT64 o = 0;
+	while (o < 0x100000)
+	{
+		o += 0x1000;
 
-        // Check if address is okay
-        if (IsAddressValid(o) == TRUE)
-        {
-            if (0x00000001000600E9 != (0xffffffffffff00ff & *(UINT64 *)(VOID *)(o + 0x000)))
-            {
-                continue;
-            } // START
-            if (0xfffff80000000000 != (0xfffff80000000003 & *(UINT64 *)(VOID *)(o + 0x070)))
-            {
-                continue;
-            } // KERNEL
-            if (0xffffff0000000fff & *(UINT64 *)(VOID *)(o + 0x0a0))
-            {
-                continue;
-            } // PML4
-            *pml4 = *(UINT64 *)(VOID *)(o + 0xa0);
-            *kernelEntry = *(UINT64 *)(VOID *)(o + 0x70);
+		// Check if address is okay
+		if (IsAddressValid(o) == TRUE)
+		{
+			if (0x00000001000600E9 != (0xffffffffffff00ff & *(UINT64*)(void*)(o + 0x000))) { continue; } // START 
+			if (0xfffff80000000000 != (0xfffff80000000003 & *(UINT64*)(void*)(o + 0x070))) { continue; } // KERNEL 
+			if (0xffffff0000000fff & *(UINT64*)(void*)(o + 0x0a0)) { continue; }                         // PML4
+            
+            p_memCpy(pml4, (UINT64)o + 0xa0, 8, FALSE);
+            p_memCpy(kernelEntry, (UINT64)o + 0x70, 8, FALSE);
 
-            return TRUE;
-        }
-    }
-    return FALSE;
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 STATIC BOOLEAN findNtosKrnl(UINT64 kernelEntry, UINT64 PML4, UINT64 *ntKernel)
@@ -357,17 +349,17 @@ STATIC BOOLEAN SetupOffsets(WinCtx *ctx)
 
 BOOLEAN InitGlobalWindowsContext()
 {
-    SerialPrintStringDebug("== Initializing windows context struct ==\r\n");
+    SerialPrintString("== Initializing windows context struct ==\r\n");
 
     if (winGlobal)
     {
-        SerialPrintStringDebug("  Cleaning up old Windows struct ...\r\n");
+        SerialPrintString("  Cleaning up old Windows struct ...\r\n");
         FreeExportList(winGlobal->ntExports);
     }
 
-    SerialPrintStringDebug("  Dynamic memory allocated before WinCtx init: ");
-    SerialPrintNumberDebug(GetMemAllocated(), 10);
-    SerialPrintStringDebug("\r\n");
+    SerialPrintString("  Dynamic memory allocated before WinCtx init: ");
+    SerialPrintNumber(GetMemAllocated(), 10);
+    SerialPrintString("\r\n");
 
     BOOLEAN status = TRUE;
     BOOLEAN verbose = FALSE;
@@ -378,11 +370,11 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (status == TRUE)
     {
-        SerialPrintStringDebug("  PML4: 0x");
-        SerialPrintNumberDebug(PML4, 16);
-        SerialPrintStringDebug(" Kernel entrypoint: 0x");
-        SerialPrintNumberDebug(kernelEntry, 16);
-        SerialPrintStringDebug("\r\n");
+        SerialPrintString("  PML4: 0x");
+        SerialPrintNumber(PML4, 16);
+        SerialPrintString(" Kernel entrypoint: 0x");
+        SerialPrintNumber(kernelEntry, 16);
+        SerialPrintString("\r\n");
 
         winGlobal->initialProcess.dirBase = PML4;
     }
@@ -398,17 +390,17 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (status == TRUE)
     {
-        SerialPrintStringDebug("  NT kernel: 0x");
-        SerialPrintNumberDebug(winGlobal->ntKernel, 16);
-        SerialPrintStringDebug("\r\n");
+        SerialPrintString("  NT kernel: 0x");
+        SerialPrintNumber(winGlobal->ntKernel, 16);
+        SerialPrintString("\r\n");
     }
     else
     {
-        SerialPrintStringDebug("ERROR: Failed finding NT kernel!\r\n");
+        SerialPrintString("ERROR: Failed finding NT kernel!\r\n");
         return FALSE;
     }
 
-    SerialPrintStringDebug("  Parsing Windows kernel exports ...\r\n");
+    SerialPrintString("  Parsing Windows kernel exports ...\r\n");
     if (GenerateExportList(winGlobal, &winGlobal->initialProcess, winGlobal->ntKernel, &winGlobal->ntExports) == FALSE)
     {
         return FALSE;
@@ -418,9 +410,9 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (status == TRUE)
     {
-        SerialPrintStringDebug("  PsInitialSystemProcess: 0x");
-        SerialPrintNumberDebug(PsInitialSystemProcess, 16);
-        SerialPrintStringDebug("\r\n");
+        SerialPrintString("  PsInitialSystemProcess: 0x");
+        SerialPrintNumber(PsInitialSystemProcess, 16);
+        SerialPrintString("\r\n");
     }
     else
     {
@@ -434,9 +426,9 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (status == TRUE)
     {
-        SerialPrintStringDebug("  SystemProcess: 0x");
-        SerialPrintNumberDebug(systemProcess, 16);
-        SerialPrintStringDebug("\r\n");
+        SerialPrintString("  SystemProcess: 0x");
+        SerialPrintNumber(systemProcess, 16);
+        SerialPrintString("\r\n");
     }
     else
     {
@@ -456,9 +448,9 @@ BOOLEAN InitGlobalWindowsContext()
         return FALSE;
     }
 
-    SerialPrintStringDebug("  NtVer: ");
-    SerialPrintNumberDebug(winGlobal->ntVersion, 10);
-    SerialPrintStringDebug("\r\n");
+    SerialPrintString("  NtVer: ");
+    SerialPrintNumber(winGlobal->ntVersion, 10);
+    SerialPrintString("\r\n");
 
     winGlobal->ntBuild = GetNTBuild(winGlobal);
 
@@ -468,9 +460,9 @@ BOOLEAN InitGlobalWindowsContext()
         return FALSE;
     }
 
-    SerialPrintStringDebug("  NtBuild ");
-    SerialPrintNumberDebug(winGlobal->ntBuild, 10);
-    SerialPrintStringDebug("\r\n");
+    SerialPrintString("  NtBuild ");
+    SerialPrintNumber(winGlobal->ntBuild, 10);
+    SerialPrintString("\r\n");
 
     status = SetupOffsets(winGlobal);
 
@@ -480,7 +472,7 @@ BOOLEAN InitGlobalWindowsContext()
         return FALSE;
     }
 
-    SerialPrintStringDebug("== Windows offsets set! ==\r\n\r\n");
+    SerialPrintString("== Windows offsets set! ==\r\n\r\n");
     return TRUE;
 }
 
@@ -489,8 +481,11 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
     BOOLEAN verbose = FALSE;
 
     if (exports->Size < sizeof(IMAGE_EXPORT_DIRECTORY) || exports->Size > 0x7fffff || exports->VirtualAddress == moduleBase)
+    {    
+        SerialPrintString("  Invalid parameters passed to ParseExportTable ...\r\n");
         return FALSE;
-
+    }
+    
     UINT64 realSize = exports->Size & 0xFFFFFFFFFFFFF000;
     realSize = realSize + 0x1000;
 
@@ -545,18 +540,23 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
     // TODO: FIX IT!
     if (exportDir->AddressOfNames - exportOffset + exportDir->NumberOfNames * sizeof(UINT32) > exports->Size)
     {
+        SerialPrintString("  Failed getting address of address of names in export table ...\r\n");
         gSmst2->SmmFreePages(physAddr, (realSize / 0x1000));
         return FALSE;
     }
+    
     UINT16 *ordinals = (UINT16 *)(VOID *)(buf + exportDir->AddressOfNameOrdinals - exportOffset);
     if (exportDir->AddressOfNameOrdinals - exportOffset + exportDir->NumberOfNames * sizeof(UINT16) > exports->Size)
     {
+        SerialPrintString("  Failed getting address of name ordinals in export table ...\r\n");
         gSmst2->SmmFreePages(physAddr, (realSize / 0x1000));
         return FALSE;
     }
+    
     UINT32 *functions = (UINT32 *)(VOID *)(buf + exportDir->AddressOfFunctions - exportOffset);
     if (exportDir->AddressOfFunctions - exportOffset + exportDir->NumberOfFunctions * sizeof(UINT32) > exports->Size)
     {
+        SerialPrintString("  Failed getting address of functions in export table ...\r\n");
         gSmst2->SmmFreePages(physAddr, (realSize / 0x1000));
         return FALSE;
     }
@@ -602,19 +602,22 @@ BOOLEAN GenerateExportList(const WinCtx *ctx, const WinProc *process, UINT64 mod
     IMAGE_NT_HEADERS64 *ntHeader64 = GetNTHeader(ctx, process, moduleBase, headerBuf, &is64);
 
     if (!ntHeader64)
+    {
+        SerialPrintString("  Failed finding valid NT Header ...\r\n");
         return FALSE;
+    }
 
     IMAGE_NT_HEADERS32 *ntHeader32 = (IMAGE_NT_HEADERS32 *)ntHeader64;
 
     IMAGE_DATA_DIRECTORY *exportTable = NULL;
     if (is64)
     {
-        SerialPrintStringDebug("  Parsing export table for 64-bit module ...\r\n");
+        SerialPrintString("  Parsing export table for 64-bit module ...\r\n");
         exportTable = ntHeader64->OptionalHeader.DataDirectory + IMAGE_DIRECTORY_ENTRY_EXPORT;
     }
     else
     {
-        SerialPrintStringDebug("  Parsing export table for 32-bit module ...\r\n");
+        SerialPrintString("  Parsing export table for 32-bit module ...\r\n");
         exportTable = ntHeader32->OptionalHeader.DataDirectory + IMAGE_DIRECTORY_ENTRY_EXPORT;
     }
     return ParseExportTable(ctx, process, moduleBase, exportTable, outList);
@@ -627,15 +630,24 @@ IMAGE_NT_HEADERS *GetNTHeader(const WinCtx *ctx, const WinProc *process, UINT64 
     //TODO: Allow the compiler to properly handle alignment
     IMAGE_DOS_HEADER *dosHeader = (IMAGE_DOS_HEADER *)(VOID *)header;
     if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE)
+    {
+        SerialPrintString("  Invalid NT Header Magic \r\n");
         return NULL;
+    }
 
     IMAGE_NT_HEADERS *ntHeader = (IMAGE_NT_HEADERS *)(VOID *)(header + dosHeader->e_lfanew);
     if ((UINT8 *)ntHeader - header > HEADER_SIZE - 0x200 || ntHeader->Signature != IMAGE_NT_SIGNATURE)
+    {
+        SerialPrintString("  Invalid NT Header Signature \r\n");
         return NULL;
+    }
 
     if (ntHeader->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC && ntHeader->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR64_MAGIC)
+    {
+        SerialPrintString("  Invalid NT Header Type \r\n");
         return NULL;
-
+    }
+    
     *is64Bit = ntHeader->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC;
 
     return ntHeader;
@@ -718,6 +730,10 @@ BOOLEAN FindProcess(WinCtx *ctx, CHAR8 *processname, BOOLEAN verbose)
                 {
                     foundSystemProcess = TRUE;
                 }
+
+                SerialPrintStringDebug(" Checking name:");
+                SerialPrintStringDebug(name);
+                SerialPrintStringDebug("\r\n");
 
                 // Check if it's the process requested
                 if (!strcmp(name, processname))

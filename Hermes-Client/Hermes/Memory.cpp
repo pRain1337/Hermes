@@ -27,7 +27,6 @@ void setPacketFinished(uint64_t packetPtr)
 {
 	// Sets the end identifier of the packet,  Handler will instantly process it 
 	memcpy((void *)(packetPtr + sizeof(hermes_packet) - sizeof(uint16_t)), &end_identifier, sizeof(uint16_t));
-
 }
 
 /*

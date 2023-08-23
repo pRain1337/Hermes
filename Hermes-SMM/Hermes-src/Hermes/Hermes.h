@@ -7,6 +7,15 @@
 #include "NTKernelTools.h"
 #include "serial.h"
 
+// Use 1 byte alignment to have the struct the same size everywhere
+#ifdef __GNUC__
+#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#endif
+
+#ifdef _MSC_VER
+#define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
+#endif
+
 // Command Data structures
 typedef struct {
     UINT64 moduleBase;
@@ -34,14 +43,16 @@ typedef enum {
     HERMES_CMD_MAX                          // Amount of commands available
 } hermes_command_t;
 
+
 // Main Packet
-typedef struct {
+PACK(typedef struct 
+{ 
     UINT16 begin;                         // Signals the start of the packet in memory
     UINT8  command;                       // Command that should be executed by smm
     UINT64 dataPointer;                   // Pointer to data that should be used by smm
     UINT64 resultPointer;                 // Pointer to the result, where smm should write
     UINT16 end;                           // Signals the end of the packet in memory
-} hermes_packet;
+}) hermes_packet;
 
 // Results
 typedef enum {
