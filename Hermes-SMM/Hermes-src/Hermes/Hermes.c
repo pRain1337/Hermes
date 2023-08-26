@@ -925,7 +925,7 @@ BOOLEAN HermesPollCommands()
                 }
 
                 // If it reaches here we should clear the found_packet as we cant return an error code
-            clear_packet:
+                clear_packet:
                 SerialPrintString("Nulling Packet.. \r\n");
                 for (UINT8 k = 0; k < sizeof(UINT16) + sizeof(UINT8) + sizeof(UINT64) + sizeof(UINT64) + sizeof(UINT16); k++)
                 {

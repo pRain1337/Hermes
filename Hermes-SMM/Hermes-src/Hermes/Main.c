@@ -17,6 +17,7 @@
 // Our includes
 #include "MemoryMapUEFI.h"
 #include "TimerRTC.h"
+#include "TimerPCH.h"
 
 #include "serial.h"
 #include "Memory.h"
@@ -101,12 +102,17 @@ EFI_STATUS EFIAPI SmmHandler(IN EFI_HANDLE DispatchHandle, IN CONST VOID *Contex
         // ctx not initialized and system hasn't booted completely
         if (SystemUptime - SystemStartTime < 10)
         {
-            return EFI_SUCCESS;
+            goto end;
         }
     }
 
     SerialPortInitialize(SERIAL_PORT_0, SERIAL_BAUDRATE);
     SmmCallHandle();
+    
+    end:
+    PchInitTimer();
+    ClearBits();
+
     return EFI_SUCCESS;
 }
 
@@ -197,6 +203,8 @@ EFI_STATUS EFIAPI UefiMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syste
     // Initialize the os ctx value, so no useless
     // probing is done while the OS hasn't even booted
     SystemInitOS = FALSE;
+
+    PchInitTimer();
 
     return Status;
 }

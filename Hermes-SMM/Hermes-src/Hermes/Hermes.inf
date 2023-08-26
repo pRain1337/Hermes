@@ -15,6 +15,7 @@
   Memory.c
   NTKernelTools.c
   TimerRTC.c
+  TimerPCH.c
   string.c
 
 

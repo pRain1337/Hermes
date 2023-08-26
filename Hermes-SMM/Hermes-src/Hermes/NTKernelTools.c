@@ -124,7 +124,7 @@ STATIC BOOLEAN findNtosKrnl(UINT64 kernelEntry, UINT64 PML4, UINT64 *ntKernel)
 
         mask = mask >> 4;
     }
-    SerialPrintString("ERROR: Could not find NTOS Kernel!\r\n");
+    SerialPrintStringDebug("ERROR: Could not find NTOS Kernel!\r\n");
     return FALSE;
 }
 
@@ -166,7 +166,7 @@ STATIC UINT16 GetNTVersion(const WinCtx *ctx)
 
     if (!getVersion)
     {
-        SerialPrintString("ERROR: Failed finding RtlGetVersion \r\n");
+        SerialPrintStringDebug("ERROR: Failed finding RtlGetVersion \r\n");
         return 0;
     }
 
@@ -200,7 +200,7 @@ STATIC UINT32 GetNTBuild(const WinCtx *ctx)
 
     if (!getVersion)
     {
-        SerialPrintString("ERROR: Failed finding RtlGetVersion \r\n");
+        SerialPrintStringDebug("ERROR: Failed finding RtlGetVersion \r\n");
         return 0;
     }
 
@@ -349,17 +349,17 @@ STATIC BOOLEAN SetupOffsets(WinCtx *ctx)
 
 BOOLEAN InitGlobalWindowsContext()
 {
-    SerialPrintString("== Initializing windows context struct ==\r\n");
+    SerialPrintStringDebug("== Initializing windows context struct ==\r\n");
 
     if (winGlobal)
     {
-        SerialPrintString("  Cleaning up old Windows struct ...\r\n");
+        SerialPrintStringDebug("  Cleaning up old Windows struct ...\r\n");
         FreeExportList(winGlobal->ntExports);
     }
 
-    SerialPrintString("  Dynamic memory allocated before WinCtx init: ");
-    SerialPrintNumber(GetMemAllocated(), 10);
-    SerialPrintString("\r\n");
+    SerialPrintStringDebug("  Dynamic memory allocated before WinCtx init: ");
+    SerialPrintNumberDebug(GetMemAllocated(), 10);
+    SerialPrintStringDebug("\r\n");
 
     BOOLEAN status = TRUE;
     BOOLEAN verbose = FALSE;
@@ -370,17 +370,17 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (status == TRUE)
     {
-        SerialPrintString("  PML4: 0x");
-        SerialPrintNumber(PML4, 16);
-        SerialPrintString(" Kernel entrypoint: 0x");
-        SerialPrintNumber(kernelEntry, 16);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("  PML4: 0x");
+        SerialPrintNumberDebug(PML4, 16);
+        SerialPrintStringDebug(" Kernel entrypoint: 0x");
+        SerialPrintNumberDebug(kernelEntry, 16);
+        SerialPrintStringDebug("\r\n");
 
         winGlobal->initialProcess.dirBase = PML4;
     }
     else
     {
-        SerialPrintString("KernelEntry failed! \r\n");
+        SerialPrintStringDebug("KernelEntry failed! \r\n");
 
         return FALSE;
     }
@@ -390,17 +390,17 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (status == TRUE)
     {
-        SerialPrintString("  NT kernel: 0x");
-        SerialPrintNumber(winGlobal->ntKernel, 16);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("  NT kernel: 0x");
+        SerialPrintNumberDebug(winGlobal->ntKernel, 16);
+        SerialPrintStringDebug("\r\n");
     }
     else
     {
-        SerialPrintString("ERROR: Failed finding NT kernel!\r\n");
+        SerialPrintStringDebug("ERROR: Failed finding NT kernel!\r\n");
         return FALSE;
     }
 
-    SerialPrintString("  Parsing Windows kernel exports ...\r\n");
+    SerialPrintStringDebug("  Parsing Windows kernel exports ...\r\n");
     if (GenerateExportList(winGlobal, &winGlobal->initialProcess, winGlobal->ntKernel, &winGlobal->ntExports) == FALSE)
     {
         return FALSE;
@@ -410,13 +410,13 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (status == TRUE)
     {
-        SerialPrintString("  PsInitialSystemProcess: 0x");
-        SerialPrintNumber(PsInitialSystemProcess, 16);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("  PsInitialSystemProcess: 0x");
+        SerialPrintNumberDebug(PsInitialSystemProcess, 16);
+        SerialPrintStringDebug("\r\n");
     }
     else
     {
-        SerialPrintString("ERROR: Failed finding PsInitialSystemProcess\r\n");
+        SerialPrintStringDebug("ERROR: Failed finding PsInitialSystemProcess\r\n");
         return FALSE;
     }
 
@@ -426,13 +426,13 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (status == TRUE)
     {
-        SerialPrintString("  SystemProcess: 0x");
-        SerialPrintNumber(systemProcess, 16);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("  SystemProcess: 0x");
+        SerialPrintNumberDebug(systemProcess, 16);
+        SerialPrintStringDebug("\r\n");
     }
     else
     {
-        SerialPrintString("ERROR: Failed finding SystemProcess\r\n");
+        SerialPrintStringDebug("ERROR: Failed finding SystemProcess\r\n");
         return FALSE;
     }
 
@@ -444,35 +444,35 @@ BOOLEAN InitGlobalWindowsContext()
 
     if (winGlobal->ntVersion == 0)
     {
-        SerialPrintString("ERROR: Failed finding NT version\r\n");
+        SerialPrintStringDebug("ERROR: Failed finding NT version\r\n");
         return FALSE;
     }
 
-    SerialPrintString("  NtVer: ");
-    SerialPrintNumber(winGlobal->ntVersion, 10);
-    SerialPrintString("\r\n");
+    SerialPrintStringDebug("  NtVer: ");
+    SerialPrintNumberDebug(winGlobal->ntVersion, 10);
+    SerialPrintStringDebug("\r\n");
 
     winGlobal->ntBuild = GetNTBuild(winGlobal);
 
     if (winGlobal->ntBuild == 0)
     {
-        SerialPrintString("ERROR: Failed finding NT build!\r\n");
+        SerialPrintStringDebug("ERROR: Failed finding NT build!\r\n");
         return FALSE;
     }
 
-    SerialPrintString("  NtBuild ");
-    SerialPrintNumber(winGlobal->ntBuild, 10);
-    SerialPrintString("\r\n");
+    SerialPrintStringDebug("  NtBuild ");
+    SerialPrintNumberDebug(winGlobal->ntBuild, 10);
+    SerialPrintStringDebug("\r\n");
 
     status = SetupOffsets(winGlobal);
 
     if (status == FALSE)
     {
-        SerialPrintString("ERROR: Failed setting Windows offsets!\r\n");
+        SerialPrintStringDebug("ERROR: Failed setting Windows offsets!\r\n");
         return FALSE;
     }
 
-    SerialPrintString("== Windows offsets set! ==\r\n\r\n");
+    SerialPrintStringDebug("== Windows offsets set! ==\r\n\r\n");
     return TRUE;
 }
 
@@ -482,7 +482,7 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
 
     if (exports->Size < sizeof(IMAGE_EXPORT_DIRECTORY) || exports->Size > 0x7fffff || exports->VirtualAddress == moduleBase)
     {    
-        SerialPrintString("  Invalid parameters passed to ParseExportTable ...\r\n");
+        SerialPrintStringDebug("  Invalid parameters passed to ParseExportTable ...\r\n");
         return FALSE;
     }
     
@@ -495,7 +495,7 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
 
     if (ret != EFI_SUCCESS)
     {
-        SerialPrintString("  Failed allocating pages while parsing export table! \r\n");
+        SerialPrintStringDebug("  Failed allocating pages while parsing export table! \r\n");
         return FALSE;
     }
 
@@ -513,11 +513,11 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
         {
             // Valid address, read it now
             if (p_memCpy((UINT64)(buf + (i * 0x1000)) & 0xFFFFFFFFFFFFF000, physicalP & 0xFFFFFFFFFFFFF000, 0x1000, verbose) == FALSE)
-                SerialPrintString("  Failed physread! \r\n");
+                SerialPrintStringDebug("  Failed physread! \r\n");
         }
         else
         {
-            SerialPrintString("  Invalid Address! \r\n");
+            SerialPrintStringDebug("  Invalid Address! \r\n");
         }
     }
 
@@ -528,7 +528,7 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
     buf[exports->Size] = 0;
     if (!exportDir->NumberOfNames || !exportDir->AddressOfNames)
     {
-        SerialPrintString("  Export Table invalid! NON is 0 \r\n");
+        SerialPrintStringDebug("  Export Table invalid! NON is 0 \r\n");
         gSmst2->SmmFreePages(physAddr, (realSize / 0x1000));
         return FALSE;
     }
@@ -540,7 +540,7 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
     // TODO: FIX IT!
     if (exportDir->AddressOfNames - exportOffset + exportDir->NumberOfNames * sizeof(UINT32) > exports->Size)
     {
-        SerialPrintString("  Failed getting address of address of names in export table ...\r\n");
+        SerialPrintStringDebug("  Failed getting address of address of names in export table ...\r\n");
         gSmst2->SmmFreePages(physAddr, (realSize / 0x1000));
         return FALSE;
     }
@@ -548,7 +548,7 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
     UINT16 *ordinals = (UINT16 *)(VOID *)(buf + exportDir->AddressOfNameOrdinals - exportOffset);
     if (exportDir->AddressOfNameOrdinals - exportOffset + exportDir->NumberOfNames * sizeof(UINT16) > exports->Size)
     {
-        SerialPrintString("  Failed getting address of name ordinals in export table ...\r\n");
+        SerialPrintStringDebug("  Failed getting address of name ordinals in export table ...\r\n");
         gSmst2->SmmFreePages(physAddr, (realSize / 0x1000));
         return FALSE;
     }
@@ -556,7 +556,7 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
     UINT32 *functions = (UINT32 *)(VOID *)(buf + exportDir->AddressOfFunctions - exportOffset);
     if (exportDir->AddressOfFunctions - exportOffset + exportDir->NumberOfFunctions * sizeof(UINT32) > exports->Size)
     {
-        SerialPrintString("  Failed getting address of functions in export table ...\r\n");
+        SerialPrintStringDebug("  Failed getting address of functions in export table ...\r\n");
         gSmst2->SmmFreePages(physAddr, (realSize / 0x1000));
         return FALSE;
     }
@@ -567,9 +567,9 @@ BOOLEAN ParseExportTable(const WinCtx *ctx, const WinProc *process, UINT64 modul
 
     if (!outList->list)
     {
-        SerialPrintString("ERROR: Allocating memory for the NtKernel export list failed! alloc size was ");
-        SerialPrintNumber(outList->size, 10);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("ERROR: Allocating memory for the NtKernel export list failed! alloc size was ");
+        SerialPrintNumberDebug(outList->size, 10);
+        SerialPrintStringDebug("\r\n");
         gSmst2->SmmFreePages(physAddr, (realSize / 0x1000));
         return FALSE;
     }
@@ -603,7 +603,7 @@ BOOLEAN GenerateExportList(const WinCtx *ctx, const WinProc *process, UINT64 mod
 
     if (!ntHeader64)
     {
-        SerialPrintString("  Failed finding valid NT Header ...\r\n");
+        SerialPrintStringDebug("  Failed finding valid NT Header ...\r\n");
         return FALSE;
     }
 
@@ -612,12 +612,12 @@ BOOLEAN GenerateExportList(const WinCtx *ctx, const WinProc *process, UINT64 mod
     IMAGE_DATA_DIRECTORY *exportTable = NULL;
     if (is64)
     {
-        SerialPrintString("  Parsing export table for 64-bit module ...\r\n");
+        SerialPrintStringDebug("  Parsing export table for 64-bit module ...\r\n");
         exportTable = ntHeader64->OptionalHeader.DataDirectory + IMAGE_DIRECTORY_ENTRY_EXPORT;
     }
     else
     {
-        SerialPrintString("  Parsing export table for 32-bit module ...\r\n");
+        SerialPrintStringDebug("  Parsing export table for 32-bit module ...\r\n");
         exportTable = ntHeader32->OptionalHeader.DataDirectory + IMAGE_DIRECTORY_ENTRY_EXPORT;
     }
     return ParseExportTable(ctx, process, moduleBase, exportTable, outList);
@@ -631,20 +631,20 @@ IMAGE_NT_HEADERS *GetNTHeader(const WinCtx *ctx, const WinProc *process, UINT64 
     IMAGE_DOS_HEADER *dosHeader = (IMAGE_DOS_HEADER *)(VOID *)header;
     if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE)
     {
-        SerialPrintString("  Invalid NT Header Magic \r\n");
+        SerialPrintStringDebug("  Invalid NT Header Magic \r\n");
         return NULL;
     }
 
     IMAGE_NT_HEADERS *ntHeader = (IMAGE_NT_HEADERS *)(VOID *)(header + dosHeader->e_lfanew);
     if ((UINT8 *)ntHeader - header > HEADER_SIZE - 0x200 || ntHeader->Signature != IMAGE_NT_SIGNATURE)
     {
-        SerialPrintString("  Invalid NT Header Signature \r\n");
+        SerialPrintStringDebug("  Invalid NT Header Signature \r\n");
         return NULL;
     }
 
     if (ntHeader->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC && ntHeader->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR64_MAGIC)
     {
-        SerialPrintString("  Invalid NT Header Type \r\n");
+        SerialPrintStringDebug("  Invalid NT Header Type \r\n");
         return NULL;
     }
     
@@ -679,11 +679,11 @@ BOOLEAN FindProcess(WinCtx *ctx, CHAR8 *processname, BOOLEAN verbose)
 
             if (verbose)
             {
-                SerialPrintString("  Session: ");
-                SerialPrintNumber(*session, 16);
-                SerialPrintString(" at ");
-                SerialPrintNumber(curProc + ctx->offsets.session, 16);
-                SerialPrintString("\r\n");
+                SerialPrintStringDebug("  Session: ");
+                SerialPrintNumberDebug(*session, 16);
+                SerialPrintStringDebug(" at ");
+                SerialPrintNumberDebug(curProc + ctx->offsets.session, 16);
+                SerialPrintStringDebug("\r\n");
             }
         }
 
@@ -694,11 +694,11 @@ BOOLEAN FindProcess(WinCtx *ctx, CHAR8 *processname, BOOLEAN verbose)
 
             if (verbose)
             {
-                SerialPrintString("  dirBase: ");
-                SerialPrintNumber(*dirBase, 16);
-                SerialPrintString(" at ");
-                SerialPrintNumber(curProc + ctx->offsets.dirBase, 16);
-                SerialPrintString("\r\n");
+                SerialPrintStringDebug("  dirBase: ");
+                SerialPrintNumberDebug(*dirBase, 16);
+                SerialPrintStringDebug(" at ");
+                SerialPrintNumberDebug(curProc + ctx->offsets.dirBase, 16);
+                SerialPrintStringDebug("\r\n");
             }
         }
 
@@ -709,11 +709,11 @@ BOOLEAN FindProcess(WinCtx *ctx, CHAR8 *processname, BOOLEAN verbose)
 
             if (verbose)
             {
-                SerialPrintString("  pid: ");
-                SerialPrintNumber(*pid, 16);
-                SerialPrintString(" at ");
-                SerialPrintNumber(curProc + ctx->offsets.apl - 8, 16);
-                SerialPrintString("\r\n");
+                SerialPrintStringDebug("  pid: ");
+                SerialPrintNumberDebug(*pid, 16);
+                SerialPrintStringDebug(" at ");
+                SerialPrintNumberDebug(curProc + ctx->offsets.apl - 8, 16);
+                SerialPrintStringDebug("\r\n");
             }
         }
 
@@ -760,9 +760,9 @@ BOOLEAN FindProcess(WinCtx *ctx, CHAR8 *processname, BOOLEAN verbose)
 
         if (verbose)
         {
-            SerialPrintString("  virtProcess: ");
-            SerialPrintNumber(virtProcess, 16);
-            SerialPrintString("\r\n");
+            SerialPrintStringDebug("  virtProcess: ");
+            SerialPrintNumberDebug(virtProcess, 16);
+            SerialPrintStringDebug("\r\n");
         }
 
         if (!virtProcess)
@@ -772,9 +772,9 @@ BOOLEAN FindProcess(WinCtx *ctx, CHAR8 *processname, BOOLEAN verbose)
 
         if (verbose)
         {
-            SerialPrintString("  curProc: ");
-            SerialPrintNumber(curProc, 16);
-            SerialPrintString("\r\n");
+            SerialPrintStringDebug("  curProc: ");
+            SerialPrintNumberDebug(curProc, 16);
+            SerialPrintStringDebug("\r\n");
         }
 
         if (!curProc)
@@ -796,11 +796,11 @@ BOOLEAN DumpSingleProcess(WinCtx *ctx, CHAR8 *processname, WinProc *process, BOO
 
     if (verbose)
     {
-        SerialPrintString("  curProc: ");
-        SerialPrintNumber(curProc, 16);
-        SerialPrintString(" virtProcess ");
-        SerialPrintNumber(virtProcess, 16);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("  curProc: ");
+        SerialPrintNumberDebug(curProc, 16);
+        SerialPrintStringDebug(" virtProcess ");
+        SerialPrintNumberDebug(virtProcess, 16);
+        SerialPrintStringDebug("\r\n");
     }
 
     UINT32 size = 0;
@@ -814,11 +814,11 @@ BOOLEAN DumpSingleProcess(WinCtx *ctx, CHAR8 *processname, WinProc *process, BOO
 
             if (verbose)
             {
-                SerialPrintString("  Session: ");
-                SerialPrintNumber(*session, 16);
-                SerialPrintString(" at ");
-                SerialPrintNumber(curProc + ctx->offsets.session, 16);
-                SerialPrintString("\r\n");
+                SerialPrintStringDebug("  Session: ");
+                SerialPrintNumberDebug(*session, 16);
+                SerialPrintStringDebug(" at ");
+                SerialPrintNumberDebug(curProc + ctx->offsets.session, 16);
+                SerialPrintStringDebug("\r\n");
             }
         }
 
@@ -829,11 +829,11 @@ BOOLEAN DumpSingleProcess(WinCtx *ctx, CHAR8 *processname, WinProc *process, BOO
 
             if (verbose)
             {
-                SerialPrintString("  dirBase: ");
-                SerialPrintNumber(*dirBase, 16);
-                SerialPrintString(" at ");
-                SerialPrintNumber(curProc + ctx->offsets.dirBase, 16);
-                SerialPrintString("\r\n");
+                SerialPrintStringDebug("  dirBase: ");
+                SerialPrintNumberDebug(*dirBase, 16);
+                SerialPrintStringDebug(" at ");
+                SerialPrintNumberDebug(curProc + ctx->offsets.dirBase, 16);
+                SerialPrintStringDebug("\r\n");
             }
         }
 
@@ -844,11 +844,11 @@ BOOLEAN DumpSingleProcess(WinCtx *ctx, CHAR8 *processname, WinProc *process, BOO
 
             if (verbose)
             {
-                SerialPrintString("  pid: ");
-                SerialPrintNumber(*pid, 16);
-                SerialPrintString(" at ");
-                SerialPrintNumber(curProc + ctx->offsets.apl - 8, 16);
-                SerialPrintString("\r\n");
+                SerialPrintStringDebug("  pid: ");
+                SerialPrintNumberDebug(*pid, 16);
+                SerialPrintStringDebug(" at ");
+                SerialPrintNumberDebug(curProc + ctx->offsets.apl - 8, 16);
+                SerialPrintStringDebug("\r\n");
             }
         }
 
@@ -889,9 +889,9 @@ BOOLEAN DumpSingleProcess(WinCtx *ctx, CHAR8 *processname, WinProc *process, BOO
 
         if (verbose)
         {
-            SerialPrintString("  virtProcess: ");
-            SerialPrintNumber(virtProcess, 16);
-            SerialPrintString("\r\n");
+            SerialPrintStringDebug("  virtProcess: ");
+            SerialPrintNumberDebug(virtProcess, 16);
+            SerialPrintStringDebug("\r\n");
         }
 
         if (!virtProcess)
@@ -901,9 +901,9 @@ BOOLEAN DumpSingleProcess(WinCtx *ctx, CHAR8 *processname, WinProc *process, BOO
 
         if (verbose)
         {
-            SerialPrintString("  curProc: ");
-            SerialPrintNumber(curProc, 16);
-            SerialPrintString("\r\n");
+            SerialPrintStringDebug("  curProc: ");
+            SerialPrintNumberDebug(curProc, 16);
+            SerialPrintStringDebug("\r\n");
         }
 
         if (!curProc)
@@ -917,7 +917,7 @@ STATIC BOOLEAN DumpSingleModule64(const WinCtx *ctx, const WinProc *process, Win
 {
     if (process->dirBase == 0 || process->physProcess == 0 || process->process == 0)
     {
-        SerialPrintString("ERROR: Process not setup correctly for module dumping!\r\n");
+        SerialPrintStringDebug("ERROR: Process not setup correctly for module dumping!\r\n");
         return FALSE;
     }
 
@@ -925,7 +925,7 @@ STATIC BOOLEAN DumpSingleModule64(const WinCtx *ctx, const WinProc *process, Win
 
     if (peb.Ldr == 0)
     {
-        SerialPrintString("ERROR: Failed reading PEB64 for module dumping!\r\n");
+        SerialPrintStringDebug("ERROR: Failed reading PEB64 for module dumping!\r\n");
         return FALSE;
     }
 
@@ -935,7 +935,7 @@ STATIC BOOLEAN DumpSingleModule64(const WinCtx *ctx, const WinProc *process, Win
 
     if (IsAddressValid(physLdr) == FALSE)
     {
-        SerialPrintString("ERROR: Phys Ldr is invalid while dumping module!\r\n");
+        SerialPrintStringDebug("ERROR: Phys Ldr is invalid while dumping module!\r\n");
         return FALSE;
     }
 
@@ -1001,9 +1001,9 @@ STATIC BOOLEAN DumpSingleModule64(const WinCtx *ctx, const WinProc *process, Win
 
     if (!module_found)
     {
-        SerialPrintString("ERROR: Could not find module ");
-        SerialPrintString(out_module->name);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("ERROR: Could not find module ");
+        SerialPrintStringDebug(out_module->name);
+        SerialPrintStringDebug("\r\n");
     }
 
     return module_found;
@@ -1013,7 +1013,7 @@ STATIC BOOLEAN DumpSingleModule86(const WinCtx *ctx, const WinProc *process, Win
 {
     if (process->dirBase == 0 || process->physProcess == 0 || process->process == 0)
     {
-        SerialPrintString("ERROR: Process not setup correctly \r\n");
+        SerialPrintStringDebug("ERROR: Process not setup correctly \r\n");
         return FALSE;
     }
 
@@ -1024,7 +1024,7 @@ STATIC BOOLEAN DumpSingleModule86(const WinCtx *ctx, const WinProc *process, Win
 
     if (peb.Ldr == 0)
     {
-        SerialPrintString("Failed reading PEB32 \r\n");
+        SerialPrintStringDebug("Failed reading PEB32 \r\n");
         return FALSE;
     }
 
@@ -1034,7 +1034,7 @@ STATIC BOOLEAN DumpSingleModule86(const WinCtx *ctx, const WinProc *process, Win
 
     if (IsAddressValid(physLdr) == FALSE)
     {
-        SerialPrintString("ERROR: Phys Ldr is invalid \r\n");
+        SerialPrintStringDebug("ERROR: Phys Ldr is invalid \r\n");
         return FALSE;
     }
 
@@ -1088,7 +1088,7 @@ STATIC BOOLEAN DumpSingleModule86(const WinCtx *ctx, const WinProc *process, Win
         for (INT32 i = 0; i < 0x15; i++)
         {
             // what the fuck?
-            // SerialPrintString(newBuffer[i]);
+            // SerialPrintStringDebug(newBuffer[i]);
         }
         SerialPrintStringDebug("\r\n");
 
@@ -1137,7 +1137,7 @@ STATIC BOOLEAN DumpModuleNames64(const WinCtx *ctx, const WinProc *process, BOOL
 {
     if (process->dirBase == 0 || process->physProcess == 0 || process->process == 0)
     {
-        SerialPrintString("ERROR: Process not setup correctly for module dumping!\r\n");
+        SerialPrintStringDebug("ERROR: Process not setup correctly for module dumping!\r\n");
         return FALSE;
     }
 
@@ -1145,7 +1145,7 @@ STATIC BOOLEAN DumpModuleNames64(const WinCtx *ctx, const WinProc *process, BOOL
 
     if (peb.Ldr == 0)
     {
-        SerialPrintString("ERROR: Failed reading PEB64 for module dumping!\r\n");
+        SerialPrintStringDebug("ERROR: Failed reading PEB64 for module dumping!\r\n");
         return FALSE;
     }
 
@@ -1155,7 +1155,7 @@ STATIC BOOLEAN DumpModuleNames64(const WinCtx *ctx, const WinProc *process, BOOL
 
     if (IsAddressValid(physLdr) == FALSE)
     {
-        SerialPrintString("ERROR: Phys Ldr is invalid while dumping module!\r\n");
+        SerialPrintStringDebug("ERROR: Phys Ldr is invalid while dumping module!\r\n");
         return FALSE;
     }
 
@@ -1226,7 +1226,7 @@ STATIC BOOLEAN DumpModuleNames86(const WinCtx *ctx, const WinProc *process, BOOL
 {
     if (process->dirBase == 0 || process->physProcess == 0 || process->process == 0)
     {
-        SerialPrintString("ERROR: Process not setup correctly \r\n");
+        SerialPrintStringDebug("ERROR: Process not setup correctly \r\n");
         return FALSE;
     }
 
@@ -1237,7 +1237,7 @@ STATIC BOOLEAN DumpModuleNames86(const WinCtx *ctx, const WinProc *process, BOOL
 
     if (peb.Ldr == 0)
     {
-        SerialPrintString("Failed reading PEB32 \r\n");
+        SerialPrintStringDebug("Failed reading PEB32 \r\n");
         return FALSE;
     }
 
@@ -1247,7 +1247,7 @@ STATIC BOOLEAN DumpModuleNames86(const WinCtx *ctx, const WinProc *process, BOOL
 
     if (IsAddressValid(physLdr) == FALSE)
     {
-        SerialPrintString("ERROR: Phys Ldr is invalid \r\n");
+        SerialPrintStringDebug("ERROR: Phys Ldr is invalid \r\n");
         return FALSE;
     }
 
@@ -1397,7 +1397,7 @@ BOOLEAN ProcessGetThunkInfoIAT(WinProc *process, WinModule *basemodule, CHAR8 *s
 
     if (ret != EFI_SUCCESS)
     {
-        SerialPrintString("ERROR: Failed allocating pages \r\n");
+        SerialPrintStringDebug("ERROR: Failed allocating pages \r\n");
         return FALSE;
     }
     UINT8 *pbModuleHeader = (UINT8 *)physAddr;
@@ -1423,7 +1423,7 @@ BOOLEAN ProcessGetThunkInfoIAT(WinProc *process, WinModule *basemodule, CHAR8 *s
     // load both 32/64 bit ntHeader (only one will be valid)
     if (!(ntHeader64 = PE_HeaderGetVerify(process, basemodule, pbModuleHeader, &f32)))
     {
-        SerialPrintString("ERROR: Parsing PE headers in VMM failed!\r\n");
+        SerialPrintStringDebug("ERROR: Parsing PE headers in VMM failed!\r\n");
         goto fail;
     }
     ntHeader32 = (PIMAGE_NT_HEADERS32)ntHeader64;
@@ -1431,13 +1431,13 @@ BOOLEAN ProcessGetThunkInfoIAT(WinProc *process, WinModule *basemodule, CHAR8 *s
     // too large
     if (cbModule > 0x02000000)
     {
-        SerialPrintString("ERROR: Module size too large\r\n");
+        SerialPrintStringDebug("ERROR: Module size too large\r\n");
         goto fail;
     }
     oImportDirectory = f32 ? ntHeader32->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress : ntHeader64->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
     if (!oImportDirectory || (oImportDirectory >= cbModule))
     {
-        SerialPrintString("ERROR: offset of import directory failed\r\n");
+        SerialPrintStringDebug("ERROR: offset of import directory failed\r\n");
         goto fail;
     }
 
@@ -1605,7 +1605,7 @@ STATIC VOID PE_SECTION_DisplayBuffer(WinProc *process, WinModule *basemodule, UI
 
     if (ret != EFI_SUCCESS)
     {
-        SerialPrintString("ERROR: Failed allocating pages \r\n");
+        SerialPrintStringDebug("ERROR: Failed allocating pages \r\n");
         return;
     }
     UINT8 *pbModuleHeader = (UINT8 *)physAddr;
@@ -1673,7 +1673,7 @@ STATIC BOOLEAN PE_GetThunkInfoEAT(WinProc *process, WinModule *basemodule, CHAR8
 
     if (ret != EFI_SUCCESS)
     {
-        SerialPrintString("ERROR: Failed allocating pages for EAT dump!\r\n");
+        SerialPrintStringDebug("ERROR: Failed allocating pages for EAT dump!\r\n");
         return FALSE;
     }
     UINT8 *pbModuleHeader = (UINT8 *)physAddr;
@@ -1715,7 +1715,7 @@ STATIC BOOLEAN PE_GetThunkInfoEAT(WinProc *process, WinModule *basemodule, CHAR8
     ret = gSmst2->SmmAllocatePages(AllocateAnyPages, EfiRuntimeServicesData, cbExportDirectory / 0x1000 + 1, &physAddrExportDir);
     if (ret != EFI_SUCCESS)
     {
-        SerialPrintString("ERROR: Failed allocating pages for the EAT module export directory \r\n");
+        SerialPrintStringDebug("ERROR: Failed allocating pages for the EAT module export directory \r\n");
         gSmst2->SmmFreePages(physAddr, 1);
         return FALSE;
     }
@@ -1737,7 +1737,7 @@ STATIC BOOLEAN PE_GetThunkInfoEAT(WinProc *process, WinModule *basemodule, CHAR8
 
     if (!exp || !exp->NumberOfNames || !exp->AddressOfNames)
     {
-        SerialPrintString("ERROR: EAT exp buffer invalid!\r\n");
+        SerialPrintStringDebug("ERROR: EAT exp buffer invalid!\r\n");
         goto cleanup;
     }
     vaRVAAddrNames = basemodule->baseAddress + exp->AddressOfNames;
@@ -1745,23 +1745,23 @@ STATIC BOOLEAN PE_GetThunkInfoEAT(WinProc *process, WinModule *basemodule, CHAR8
     vaRVAAddrFunctions = basemodule->baseAddress + exp->AddressOfFunctions;
     if ((vaRVAAddrNames < vaExportDirectory) || (vaRVAAddrNames > vaExportDirectory + cbExportDirectory - exp->NumberOfNames * sizeof(UINT32)))
     {
-        SerialPrintString("ERROR: vaRVAAddrNames invalid! value: ");
-        SerialPrintNumber(vaRVAAddrNames, 16);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("ERROR: vaRVAAddrNames invalid! value: ");
+        SerialPrintNumberDebug(vaRVAAddrNames, 16);
+        SerialPrintStringDebug("\r\n");
         goto cleanup;
     }
     if ((vaNameOrdinals < vaExportDirectory) || (vaNameOrdinals > vaExportDirectory + cbExportDirectory - exp->NumberOfNames * sizeof(UINT16)))
     {
-        SerialPrintString("ERROR: vaNameOrdinals invalid! value: ");
-        SerialPrintNumber(vaNameOrdinals, 16);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("ERROR: vaNameOrdinals invalid! value: ");
+        SerialPrintNumberDebug(vaNameOrdinals, 16);
+        SerialPrintStringDebug("\r\n");
         goto cleanup;
     }
     if ((vaRVAAddrFunctions < vaExportDirectory) || (vaRVAAddrFunctions > vaExportDirectory + cbExportDirectory - exp->NumberOfNames * sizeof(UINT32)))
     {
-        SerialPrintString("ERROR: vaRVAAddrFunctions invalid! value: ");
-        SerialPrintNumber(vaRVAAddrFunctions, 16);
-        SerialPrintString("\r\n");
+        SerialPrintStringDebug("ERROR: vaRVAAddrFunctions invalid! value: ");
+        SerialPrintNumberDebug(vaRVAAddrFunctions, 16);
+        SerialPrintStringDebug("\r\n");
         goto cleanup;
     }
     cbProcName = (UINT32)strlen(procName) + 1;
@@ -1801,9 +1801,9 @@ STATIC BOOLEAN PE_GetThunkInfoEAT(WinProc *process, WinModule *basemodule, CHAR8
 cleanup:
     gSmst2->SmmFreePages(physAddr, 1);
     gSmst2->SmmFreePages(physAddrExportDir, cbExportDirectory / 0x1000 + 1);
-    SerialPrintString("EAT: FAILED TO FIND procName: ");
-    SerialPrintString(procName);
-    SerialPrintString("\r\n");
+    SerialPrintStringDebug("EAT: FAILED TO FIND procName: ");
+    SerialPrintStringDebug(procName);
+    SerialPrintStringDebug("\r\n");
     return FALSE;
 }
 
