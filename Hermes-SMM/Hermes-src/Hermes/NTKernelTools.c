@@ -27,8 +27,8 @@ STATIC BOOLEAN CheckLow(UINT64 *pml4, UINT64 *kernelEntry)
 			if (0xfffff80000000000 != (0xfffff80000000003 & *(UINT64*)(void*)(o + 0x070))) { continue; } // KERNEL 
 			if (0xffffff0000000fff & *(UINT64*)(void*)(o + 0x0a0)) { continue; }                         // PML4
             
-            p_memCpy(pml4, (UINT64)o + 0xa0, 8, FALSE);
-            p_memCpy(kernelEntry, (UINT64)o + 0x70, 8, FALSE);
+            p_memCpy((UINT64)pml4, (UINT64)o + 0xa0, 8, FALSE);
+            p_memCpy((UINT64)kernelEntry, (UINT64)o + 0x70, 8, FALSE);
 
 			return TRUE;
 		}
