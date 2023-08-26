@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GlobalVars.h"
-
 #include "Hermes.h"
 
 void clearPacket(uint64_t packetPtr);
