@@ -50,15 +50,15 @@ Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada
 
 | Commad | Description | Input | Output |
 |---|---|---|---|
-| gD | Returns the directory base of the requested process  | Processname | Directory Base |
-| gMD | Returns essential information of the requested module in a process | Processname & Modulename | Modulename & Size |
-| gM | Returns all module names of the requested process  | Processname | Name of every processmodule |
-| vR | Reads the memory at the requested virtual memory address | Source Virtual address, Directory Base & Size  | Memory read at the address |
-| vW | Writes the supplied integer to the requested virtual memory address | Destination Virtual address, Directory Base, Size & Value | - |
-| pR | Reads the memory at the requested physical memory address | Source Physical address, Directory Base & Size  | Memory read at the address |
-| pW | Writes the supplied integer to the requested physical memory address | Destination Physical address, Directory Base, Size & Value | -  |
-| vTp | Converts a virtual memory address to physical | Source Virtual address & Directory Base | Converted Physical address  |
-| dM | Dumps the requested memory area | Source Virtual address, Directory Base, Size & File name | Memory read is written into the file |
+| gd | Returns the directory base of the requested process  | Processname | Directory Base |
+| gmd | Returns essential information of the requested module in a process | Processname & Modulename | Modulename & Size |
+| gm | Returns all module names of the requested process  | Processname | Name of every processmodule |
+| vr | Reads the memory at the requested virtual memory address | Source Virtual address, Directory Base & Size  | Memory read at the address |
+| vw | Writes the supplied integer to the requested virtual memory address | Destination Virtual address, Directory Base, Size & Value | - |
+| pr | Reads the memory at the requested physical memory address | Source Physical address, Directory Base & Size  | Memory read at the address |
+| pw | Writes the supplied integer to the requested physical memory address | Destination Physical address, Directory Base, Size & Value | -  |
+| vtp | Converts a virtual memory address to physical | Source Virtual address & Directory Base | Converted Physical address  |
+| dm | Dumps the requested memory area | Source Virtual address, Directory Base, Size & File name | Memory read is written into the file |
 | exit | Exits the client process | - | - |
 | help | Displays the help about the commands | - | - |
 
