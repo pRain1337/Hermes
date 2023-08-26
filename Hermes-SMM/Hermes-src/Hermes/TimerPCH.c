@@ -1,4 +1,5 @@
 #include "TimerPCH.h"
+#include "serial.h"
     
 VOID PchInitTimer()
 {   
