@@ -70,11 +70,21 @@ Hermes can be used to dump a memory range of a file, this is useful for reverse 
 
 The following video shows hermes in action dumping putty.exe:
 
+
+https://github.com/pRain1337/Hermes/assets/26672236/b75e0244-a618-48b5-b012-d50b138adc3c
+
+
+
 ### Reading Credential Guard protected memory
 _LsaIso.exe_ is the credential guard protected version of _Lsass.exe_ which stores and protects credentials.
 Normal toolkits (as example cheat engine) are unable to read the virtual memory of _LsaIso.exe_ as the windows hypervisor is blocking their access, hermes fully bypasses this protection as it is not running under the hypervisor.
 
 The following video shows hermes reading LsaIso.exe memory:
+
+
+https://github.com/pRain1337/Hermes/assets/26672236/9856463a-23b3-4df8-b676-99eda26b927e
+
+
 
 ## Detection
 The following examples show ideas and approaches to detect the activitys of SMM, but not in general malicious behavior.
@@ -96,7 +106,12 @@ Based on the idea of [Nick Peterson](https://twitter.com/nickeverdox/) which he 
 [H33p](https://github.com/h33p) has created a replication of this project in rust, to test this claim. 
 The initial tweet only claimed detection from os or hypervisor, but we've tested it from smm and it was also able to detect it.
 Old video with the private version of hermes (named atlas):
-[Video](https://streamable.com/j2fihy)
+
+https://github.com/pRain1337/Hermes/assets/26672236/589a168d-99a2-46d3-8b8d-601b3bb5570d
+
+
+
+
 - At 0:22 the virtual read function is used
 - At 0:37 the physical read function is used
 
