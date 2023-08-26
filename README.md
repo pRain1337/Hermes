@@ -71,7 +71,7 @@ Hermes can be used to dump a memory range of a file, this is useful for reverse 
 The following video shows hermes in action dumping putty.exe:
 
 
-https://github.com/pRain1337/Hermes/assets/26672236/b75e0244-a618-48b5-b012-d50b138adc3c
+https://github.com/pRain1337/Hermes/assets/26672236/58891cd8-1923-4247-88dd-1556a82d9e25
 
 
 
@@ -82,7 +82,7 @@ Normal toolkits (as example cheat engine) are unable to read the virtual memory 
 The following video shows hermes reading LsaIso.exe memory:
 
 
-https://github.com/pRain1337/Hermes/assets/26672236/9856463a-23b3-4df8-b676-99eda26b927e
+https://github.com/pRain1337/Hermes/assets/26672236/23bac20d-eb8a-49c0-b46a-753e42b08bf0
 
 
 
@@ -105,11 +105,12 @@ Using a hypervisor will ofcourse end in a lot of more flags.
 Based on the idea of [Nick Peterson](https://twitter.com/nickeverdox/) which he presented in a [Tweet](https://web.archive.org/web/20211229210102/https://twitter.com/nickeverdox/status/1476295914423656456) to use side channels to detect reads of a memory. 
 [H33p](https://github.com/h33p) has created a replication of this project in rust, to test this claim. 
 The initial tweet only claimed detection from os or hypervisor, but we've tested it from smm and it was also able to detect it.
+It basically works by checking the access time to a predefined memory location. As long as no other application touches the memory, the cache duration should stay the same.
+The test itself can introduce false positives if anti-virus or similar applications are running on the system.
 Old video with the private version of hermes (named atlas):
 
-https://github.com/pRain1337/Hermes/assets/26672236/589a168d-99a2-46d3-8b8d-601b3bb5570d
 
-
+https://github.com/pRain1337/Hermes/assets/26672236/91ded9c8-983b-4741-bae4-32eb7125d279
 
 
 - At 0:22 the virtual read function is used
@@ -118,7 +119,7 @@ https://github.com/pRain1337/Hermes/assets/26672236/589a168d-99a2-46d3-8b8d-601b
 #### How to prevent it
 This detection can be bypassed using the [control register 0](https://wiki.osdev.org/CR0#CR0).
 By setting the _Cache disable_ and _Not-write through_ bit before performing a read and disabling these afterwards.
-This results in a big performance hit as no caching is used anymore but the 
+This results in a big performance hit as no caching is used anymore but the reads themselves wont be detected anymore.
 
 ### UEFI Image analysis
 #### How it works
