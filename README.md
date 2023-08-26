@@ -29,7 +29,7 @@
 ## Intro
 
 Hermes is a PoC demonstrating how a UEFI module running in System Management Mode
-(SMM) can be used by a user mode process to elevate it's own privileges higher
+(SMM) can be used by a user mode process to elevate its own privileges higher
 than the kernel itself. This module is a continuation work on our previous
 UEFI module, which was a simple [SMM rootkit](https://github.com/jussihi/SMM-Rootkit).
 
@@ -37,32 +37,32 @@ If you want to read about SMM (rootkits) in general, please read the old
 [blog post](https://jussihi.kapsi.fi/2022-09-08-smmrootkit/)!
 
 This version of the UEFI module contains the basic components to interact with the
-windows kernel (find processes, get all modules of a process, get information
+Windows kernel (find processes, get all modules of a process, get information
 about a process module and dump a memory range to file) or the basic memory
 procedures (read/write virtual & physical memory and convert virtual to
 physical memory). It can be expanded to include automatic forensic actions as
-example.
+example. A drawback of Hermes is the current timer execution. The chipset timer allows a execution every 64 seconds, which is enough for demonstration purposes.
+Finding another way to generate more frequent SMIs (System management interrupts) is left as an exercise to the reader.
 
 **Supports (at least):**
 - Windows 11 22H2
 - Windows 10 1809
 
-As the usermode application itself does not interact with any of the processes
-or the memory itself as the smm module is doing everything while the processor
-is in the system management mode, anti-viruses or even the kernel itself won't
-notice the behavior but only the effects that were done (as example, through
+As the user mode application itself does not interact with any of the processes
+or the memory itself as the SMM module is doing everything while the processor
+is in the system management mode, antiviruses or even the kernel itself won't
+notice the behavior but only the effects that were done (for example, through
 DKOM).
 
-Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada
-(HF-ICT, Muttenz CH).
+Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada (HF-ICT, Muttenz CH).
 
 ## Commands
 
-| Commad | Description | Input | Output |
+| Command | Description | Input | Output |
 |---|---|---|---|
-| gd | Returns the directory base of the requested process  | Processname | Directory Base |
-| gmd | Returns essential information of the requested module in a process | Processname & Modulename | Modulename & Size |
-| gm | Returns all module names of the requested process  | Processname | Name of every processmodule |
+| gd | Returns the directory base of the requested process  | Process name | Directory Base |
+| gmd | Returns essential information of the requested module in a process | Process name & Module name | Module name & Size |
+| gm | Returns all module names of the requested process  | Process name | Name of every module in a process |
 | vr | Reads the memory at the requested virtual memory address | Source Virtual address, Directory Base & Size  | Memory read at the address |
 | vw | Writes the supplied integer to the requested virtual memory address | Destination Virtual address, Directory Base, Size & Value | - |
 | pr | Reads the memory at the requested physical memory address | Source Physical address, Directory Base & Size  | Memory read at the address |
@@ -76,9 +76,9 @@ Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada
 The following examples show basic usage of Hermes suite.
 
 ### Dumping process memory
-Hermes can be used to dump a memory range of a file, this is useful for reverse engineering of otherwise protected processes which cant be read normally or close themself as soon as they detect a debugger or reverse engineering toolkit.
+Hermes can be used to dump a memory range of a file, this is useful for reverse engineering of otherwise protected processes which can't be read normally or close automatically as soon as they detect a debugger or reverse engineering toolkit.
 
-The following video shows hermes in action dumping putty.exe:
+The following video shows Hermes in action dumping putty.exe:
 
 
 https://github.com/pRain1337/Hermes/assets/26672236/58891cd8-1923-4247-88dd-1556a82d9e25
@@ -87,9 +87,9 @@ https://github.com/pRain1337/Hermes/assets/26672236/58891cd8-1923-4247-88dd-1556
 
 ### Reading Credential Guard protected memory
 _LsaIso.exe_ is the credential guard protected version of _Lsass.exe_ which stores and protects credentials.
-Normal toolkits (as example cheat engine) are unable to read the virtual memory of _LsaIso.exe_ as the windows hypervisor is blocking their access, hermes fully bypasses this protection as it is not running under the hypervisor.
+Normal toolkits (for example cheat engine) are unable to read the virtual memory of _LsaIso.exe_ as the windows hypervisor is blocking their access, Hermes fully bypasses this protection as it is not running under the hypervisor.
 
-The following video shows hermes reading LsaIso.exe memory:
+The following video shows Hermes reading LsaIso.exe memory:
 
 
 https://github.com/pRain1337/Hermes/assets/26672236/23bac20d-eb8a-49c0-b46a-753e42b08bf0
@@ -97,15 +97,15 @@ https://github.com/pRain1337/Hermes/assets/26672236/23bac20d-eb8a-49c0-b46a-753e
 
 
 ## Detection
-The following examples show ideas and approaches to detect the activitys of SMM,
+The following examples show ideas and approaches to detect the activities of SMM,
 but not in general malicious behavior.
 Most of these could be evaded by utilizing additional components in the SMM module.
 
 ### MSR_SMI_COUNT
 #### How it works
-The MSR_SMI_COUNT increases everytime there is a active System management interrupt.
+The MSR_SMI_COUNT increases every time there is a active System management interrupt.
 For the best functionality, an SMM module (rootkit) would want to get regular
-execution which is not usual behavior.
+execution, which is not usual behavior.
 
 By checking the counter, one can notice if an SMM module has enabled a timer
 and hence SMM gets more executions than it would normally get.
@@ -115,10 +115,10 @@ For instructions on how to read the MSR_SMI_COUNT see
 other useful information for analyzing UEFI/SMM.
 
 #### How to prevent it
-Spoofing a MSR is not easily done with SMM, the easiest approach would be to
+Spoofing an MSR is not easily done with SMM, the easiest approach would be to
 utilize a hypervisor to spoof the results of the MSR.
 
-Using a hypervisor will ofcourse end in a lot of more flags.
+Using a hypervisor will of course end in a lot of more flags.
 
 ### Side channel cache detection
 #### How it works
@@ -131,11 +131,11 @@ to use side channels to detect reads of a memory.
 rust, to test this claim. 
 
 The initial tweet only claimed detection from os or hypervisor, but we've
-tested it from smm and it was also able to detect it. It basically works by
+tested it from SMM, and it was also able to detect it. It basically works by
 checking the access time to a predefined memory location. As long as no other
 application touches the memory, the cache duration should stay the same.
 
-The test itself can introduce false positives if anti-virus or similar
+The test itself can introduce false positives if antivirus or similar
 applications are running on the system.
 
 Old video with the private version of hermes (named atlas):
@@ -152,30 +152,30 @@ This detection can be bypassed using the
 [control register 0](https://wiki.osdev.org/CR0#CR0).
 
 By setting the _Cache disable_ and _Not-write through_ bit before performing
-a read and disabling these afterwards.
+a read and disabling these afterward.
 
 This results in a big performance hit as no caching is used anymore but the
-reads themselves wont be detected anymore.
+reads themselves won't be detected anymore.
 
 ### UEFI Image analysis
 #### How it works
-The SPI chip holds the image which contains the smm rootkit module, the chip
-itself can be read using manufacturer provided tools (as example afudos).
+The SPI chip holds the image which contains the SMM rootkit module, the chip
+itself can be read using manufacturer provided tools (for example afudos).
 
 These images can then be analyzed using as example
-[UEFITool](https://github.com/LongSoft/UEFITool)
+[UEFITool](https://github.com/LongSoft/UEFITool).
 
 #### How to prevent it
-Easiest way is to simply just block the reading of the SPI chip utilizing the
+The easiest way is to simply just block the reading of the SPI chip utilizing the
 protected range registers.
 
 For more information about how to achieve this, check out the
 [x86-64 Intel Firmware Attack & Defense course](https://p.ost2.fyi/courses/course-v1:OpenSecurityTraining2+Arch4001_x86-64_RVF+2021_v1/about)
 by Xeno Kovah.
 
-Blocking it ofcourse leaves a red flag, as this is not expected behavior.
+Blocking it of course leaves a red flag, as this is not expected behavior.
 
-A better looking approach would be utilizing SMM as a MitM to modify the read
+A better looking approach would be utilizing SMM as a Mitm to modify the read
 SPI data before it's passed to the user mode application.
 
 This was already done by
@@ -276,14 +276,14 @@ edk2's OVMF with SMM modules enabled
 
 The resulting OVMF firmware will be inside `edk2/Build/OvmfX64/RELEASE_GCC5/FV`.
 
-For running it on real hardware, you'll have to patch PiSmmCpuDxeSmm. Modern
+For running it on real hardware, you'll have to patch _PiSmmCpuDxeSmm_. Modern
 SMM protections setup by edk2 will produce a fault otherwise when accessing
 normal OS memory. Check out
 [How to patch PiSmmCpuDxeSmm](#how-to-patch-pismmcpudxesmm)
 
 ## Building Hermes-Client
 
-To build the Hermes-Client you dont need docker, but visual studio.
+To build the Hermes-Client you need to use visual studio instead of docker.
 
 Simply open the Solution file and compile, you might need platform/sdk/toolset
 on the project file first.
@@ -294,7 +294,7 @@ The default settings compile a x64-86 application for windows.
 This version was developed for and tested on the Intel z690 chipset, it should
 still work on older/newer chipsets as very few offsets are changed.
 
-The SMM module itself also works in a virtualized environment, altough some of
+The SMM module itself also works in a virtualized environment, although some of
 the native chipset feature it uses (SMI timer) are not available there.
 
 If the SMM module is not working as expected, you can use the inbuilt serial
@@ -308,9 +308,7 @@ a General Exception which halts the system.
 If you are trying to run this SMM module on real hardware, you need to patch
 your motherboard's `PiSmmCpuDxeSmm` module from the UEFI firmware. You can mimick
 [our patch](https://github.com/jussihi/SMM-Rootkit/tree/master/SMM%20Rootkit/UefiCpuPkg)
-by 
-
-Patching this variable initialization out and hard code the variable itself to
+by Patching this variable initialization out and hard code the variable itself to
 0 with your favorite disassembler (IDA or similar):
 
 https://github.com/tianocore/edk2/blob/master/UefiCpuPkg/PiSmmCpuDxeSmm/X64/PageTbl.c#L352
@@ -331,7 +329,7 @@ https://github.com/tianocore/edk2/blob/master/UefiCpuPkg/PiSmmCpuDxeSmm/X64/Page
 
 ### No serial output after boot
 
-Sometimes the serial traffic is blocked as the operating system's own serial
+Sometimes the serial traffic is blocked because of the operating system's own serial
 driver. This is at least the case in Windows systems when not booting inside
 a (QEMU/KVM) virtual machine.
 
@@ -347,7 +345,7 @@ The default path to the driver executable is
 - Open an SSH client locally
 
 You can also open the connection to the local serial port using your favorite
-serial client. At least on Windows this will prevent Windows' own driver from
+serial client. At least on Windows this will prevent Windows own driver from
 suppressing the serial output.
 
 ## Sources
