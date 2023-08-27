@@ -5,7 +5,7 @@
 ## Table of contents
 - [Intro](#intro)
 - [Commands](#commands)
-- [Examples](#examples)
+- [Examples](#example-videos)
   * [Dumping process memory](#dumping-process-memory)
   * [Reading LsaIso.exe memory](#reading-credential-guard-protected-memory)
 - [Detection](#detection)
@@ -67,7 +67,7 @@ Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada (HF-IC
 | vw | Writes the supplied integer to the requested virtual memory address | Destination Virtual address, Directory Base, Size & Value | - |
 | pr | Reads the memory at the requested physical memory address | Source Physical address, Directory Base & Size  | Memory read at the address |
 | pw | Writes the supplied integer to the requested physical memory address | Destination Physical address, Directory Base, Size & Value | -  |
-| vtp | Converts a virtual memory address to physical | Source Virtual address & Directory Base | Converted Physical address  |
+| vto | Converts a virtual memory address to physical | Source Virtual address & Directory Base | Converted Physical address  |
 | dm | Dumps the requested memory area | Source Virtual address, Directory Base, Size & File name | Memory read is written into the file |
 | exit | Exits the client process | - | - |
 | help | Displays the help about the commands | - | - |
