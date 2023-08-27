@@ -81,8 +81,8 @@ Hermes can be used to dump a memory range of a file, this is useful for reverse 
 The following video shows Hermes in action dumping putty.exe:
 
 
-https://github.com/pRain1337/Hermes/assets/26672236/58891cd8-1923-4247-88dd-1556a82d9e25
 
+https://github.com/pRain1337/Hermes/assets/26672236/61bbe457-ccd8-42e3-85d3-6191a58dc3ae
 
 
 ### Reading Credential Guard protected memory
@@ -92,7 +92,7 @@ Normal toolkits (for example cheat engine) are unable to read the virtual memory
 The following video shows Hermes reading LsaIso.exe memory:
 
 
-https://github.com/pRain1337/Hermes/assets/26672236/23bac20d-eb8a-49c0-b46a-753e42b08bf0
+https://github.com/pRain1337/Hermes/assets/26672236/f333d26c-bab3-4ffd-8b56-e47c612ac300
 
 
 
@@ -141,7 +141,7 @@ applications are running on the system.
 Old video with the private version of hermes (named atlas):
 
 
-https://github.com/pRain1337/Hermes/assets/26672236/91ded9c8-983b-4741-bae4-32eb7125d279
+https://github.com/pRain1337/Hermes/assets/26672236/882325d2-1416-4c17-a36b-e7e73a517f1d
 
 
 - At 0:22 the virtual read function is used
