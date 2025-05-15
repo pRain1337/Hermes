@@ -2,8 +2,10 @@
 #include "Hermes.h"
 #include "Memory.h"
 #include "Prints.h"
+#include "../Hermes/Windows.h"
 
 #include <iostream>
+
 
 /*
  *   Function for requesting the modules of a given process.
@@ -85,41 +87,23 @@ void getModules(uint64_t packetBegin)
     clearPacket(packetBegin);
 }
 
-/*
- *   Function for requesting detailed information about a module of a process.
- *   Asks for the following parameter:
- *       - packetBegin, pointer to the start of the memory mapping buffer
- *
- *   The function itself asks for further information (process name and module name)
- *
-*/
-void getModuledata(uint64_t packetBegin)
+void getModuledataByName(uint64_t packetBegin, std::string processName, std::string moduleName)
 {
     setPacketStarting(packetBegin);
 
-    std::cout << "Processname (MAX 63 CHARS): ";
-    std::string prName;
-    std::cin >> prName;
+    uint8_t nLength = processName.length() + 1;
+    char* cprName = &processName[0];
 
-    uint8_t nLength = prName.length() + 1;
-
-    char *cprName = &prName[0];
-
-    std::cout << "Modulename (MAX 63 CHARS): ";
-    std::string moName;
-    std::cin >> moName;
-
-    uint8_t mLength = moName.length() + 1;
-
-    char *cmoName = &moName[0];
+    uint8_t mLength = moduleName.length() + 1;
+    char* cmoName = &moduleName[0];
 
     setPacketCommand(packetBegin, HERMES_CMD_GET_MODULEDATA);
 
-    void *data = (void *)malloc(sizeof(uint8_t) + nLength + sizeof(uint8_t) + mLength);
+    void* data = (void*)malloc(sizeof(uint8_t) + nLength + sizeof(uint8_t) + mLength);
     memcpy(data, &nLength, sizeof(uint8_t));
-    memcpy((void *)((uint64_t)data + sizeof(uint8_t)), cprName, nLength);
+    memcpy((void*)((uint64_t)data + sizeof(uint8_t)), cprName, nLength);
     memcpy((void*)((uint64_t)data + sizeof(uint8_t) + nLength), &mLength, sizeof(uint8_t));
-    memcpy((void *)((uint64_t)data + sizeof(uint8_t) + nLength + sizeof(uint8_t)), cmoName, mLength);
+    memcpy((void*)((uint64_t)data + sizeof(uint8_t) + nLength + sizeof(uint8_t)), cmoName, mLength);
     setPacketDataPtr(packetBegin, (uint64_t)data);
 
     if (debug)
@@ -137,7 +121,7 @@ void getModuledata(uint64_t packetBegin)
     std::cout << "Waiting for Endpoint... " << std::endl;
     while (result.moduleBase == 0)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     if (result.moduleBase <= 0x9000)
@@ -154,6 +138,33 @@ void getModuledata(uint64_t packetBegin)
     clearPacket(packetBegin);
 
     free(data);
+}
+
+/*
+ *   Function for requesting detailed information about a module of a process.
+ *   Asks for the following parameter:
+ *       - packetBegin, pointer to the start of the memory mapping buffer
+ *
+ *   The function itself asks for further information (process name and module name)
+ *
+*/
+void getModuledata(uint64_t packetBegin)
+{
+    std::cout << "Processname (MAX 63 CHARS): ";
+    std::string prName;
+    std::cin >> prName;
+
+    uint8_t nLength = prName.length() + 1;
+    char *cprName = &prName[0];
+
+    std::cout << "Modulename (MAX 63 CHARS): ";
+    std::string moName;
+    std::cin >> moName;
+
+    uint8_t mLength = moName.length() + 1;
+    char *cmoName = &moName[0];
+
+    getModuledataByName(packetBegin, prName, moName);
 }
 
 /*
@@ -246,4 +257,38 @@ void dumpModule(uint64_t packetBegin)
     ofs.close();
 
     _aligned_free(result);
+}
+
+/*
+ *
+ *
+*/
+void speedTest(uint64_t packetBegin)
+{
+	std::cout << "Begin speed test" << std::endl;
+
+    const auto start_time = GetTickCount64();
+
+    int nb_exec = 0;
+
+    while (GetTickCount64() - start_time <= 5000)
+    {
+        getModuledataByName(packetBegin, "hermes.exe", "hermes.exe");
+
+        nb_exec++;
+    }
+
+    const auto end_time = GetTickCount64();
+
+    const auto elapsed_time = end_time - start_time;
+
+    const int rate = nb_exec / (elapsed_time / 1000.f);
+
+    std::cout << "Elapsed time: " << std::dec << elapsed_time << "ms" << std::endl;
+
+    std::cout << "Number of executions: " << std::dec << nb_exec << std::endl;
+
+    std::cout << "Freq: " << std::dec << rate << " Hz" << std::endl;
+
+    std::cout << "End speed test" << std::endl;
 }
