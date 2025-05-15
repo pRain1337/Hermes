@@ -121,7 +121,7 @@ void getModuledataByName(uint64_t packetBegin, std::string processName, std::str
     std::cout << "Waiting for Endpoint... " << std::endl;
     while (result.moduleBase == 0)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     if (result.moduleBase <= 0x9000)
