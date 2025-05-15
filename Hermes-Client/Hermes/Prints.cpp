@@ -53,6 +53,7 @@ void printCommands(uint64_t dummy)
     std::cout << " pw		- writes to supplied physical address" << std::endl;
     std::cout << " vtp		- converts virtual to physical" << std::endl;
     std::cout << " dm		- dumps the supplied modulename / size" << std::endl;
+    std::cout << " st		- run speed test" << std::endl;
     std::cout << " exit		- ends the Hermes process " << std::endl;
     std::cout << " help		- displays this again" << std::endl;
 }
