@@ -69,6 +69,7 @@ Created by Jussi Hietanen (Aalto University, Espoo FI) and Diego Caminada (HF-IC
 | pw | Writes the supplied integer to the requested physical memory address | Destination Physical address, Directory Base, Size & Value | -  |
 | vto | Converts a virtual memory address to physical | Source Virtual address & Directory Base | Converted Physical address  |
 | dm | Dumps the requested memory area | Source Virtual address, Directory Base, Size & File name | Memory read is written into the file |
+| st | Run speed test | - | - |
 | exit | Exits the client process | - | - |
 | help | Displays the help about the commands | - | - |
 
