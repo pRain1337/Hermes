@@ -39,6 +39,7 @@ std::map<std::string, hermes_func> hermes_funcs =
   { "vto", virtualToPhysical },
   { "dm", dumpModule },
   { "gm", getModules },
+  { "gmv", getModulesVerbose },
   { "help", printCommands },
   { "exit", close }
 };

@@ -6,6 +6,8 @@
 
 void getModules(uint64_t packetBegin);
 
+void getModulesVerbose(uint64_t packetBegin);
+
 void getModuledata(uint64_t packetBegin);
 
 void dumpModule(uint64_t packetBegin);

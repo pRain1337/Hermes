@@ -47,6 +47,7 @@ void printCommands(uint64_t dummy)
     std::cout << " gd		- gets dirbase from the supplied process" << std::endl;
     std::cout << " gmd		- gets data from the supplied modulename" << std::endl;
     std::cout << " gm		- returns all the modules from the supplied process" << std::endl;
+    std::cout << " gmv		- returns all the modules from the supplied process with additional infos" << std::endl;
     std::cout << " vr		- reads the supplied virtual address" << std::endl;
     std::cout << " vw		- writes to supplied virtual address" << std::endl;
     std::cout << " pr		- reads the supplied physical address" << std::endl;

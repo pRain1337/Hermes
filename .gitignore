@@ -50,3 +50,5 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+Hermes-Client/Hermes/Release/
+Hermes-SMM/Hermes-src/Hermes/.vs/

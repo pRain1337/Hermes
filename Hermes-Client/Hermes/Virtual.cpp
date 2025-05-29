@@ -21,9 +21,11 @@ void getDirbase(uint64_t packetBegin)
     std::string prName;
     std::cin >> prName;
 
-    uint8_t nLength = prName.length() + 1;
+	// Fill the rest of the string
+	prName.resize(64, '\0');
 
-    char *cprName = &prName[0];
+    const char *cprName = prName.c_str();
+	uint8_t nLength = std::strlen(cprName) + 1;
 
     setPacketCommand(packetBegin, HERMES_CMD_GET_DIRBASE);
 
